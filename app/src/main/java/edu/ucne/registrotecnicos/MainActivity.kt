@@ -11,12 +11,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.room.Room
+import edu.ucne.registrotecnicos.data.database.TecnicoDb
 import edu.ucne.registrotecnicos.ui.theme.RegistroTecnicosTheme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var tecnicoDb: TecnicoDb
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        tecnicoDb = Room.databaseBuilder(
+            applicationContext,
+            TecnicoDb::class.java,
+            name = "Tecnico.db"
+        ).fallbackToDestructiveMigrationFrom()
+            .build()
+
+
         setContent {
             RegistroTecnicosTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
