@@ -1,5 +1,4 @@
 import androidx.benchmark.perfetto.ExperimentalPerfettoCaptureApi
-import androidx.benchmark.perfetto.PerfettoConfig
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,12 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -33,6 +28,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.ucne.registrotecnicos.data.entities.TecnicoEntity
@@ -137,4 +133,16 @@ fun TecnicoScreen(
 
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TecnicoScreenPreview_Nuevo() {
+    TecnicoScreen(
+        tecnico = null,
+        agregarTecnico = { nombre, sueldo ->
+            println("Nuevo técnico: $nombre, $sueldo")
+        },
+        onCancel = { println("Cancelado") }
+    )
 }
