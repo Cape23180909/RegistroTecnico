@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
             RegistroTecnicosTheme {
                 val navController = rememberNavController()
                 TecnicosNavHost(
-                    navHostController = navController,
+                    navController = navController,
                     viewModel = tecnicosViewModel
                 )
             }

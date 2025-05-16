@@ -6,29 +6,32 @@ import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
+import edu.ucne.registrotecnicos.presentation.dashboard.DashboardScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoListScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoViewModel
 
 @Composable
 fun TecnicosNavHost(
-    navHostController: NavHostController,
+    navController: NavHostController,
     viewModel: TecnicoViewModel
 ) {
     NavHost(
-        navController = navHostController,
-        startDestination = Screen.TecnicoList
+        navController = navController,
+        startDestination = "dashboard"
     ) {
-        composable<Screen.TecnicoList> {
-            val tecnicoList = viewModel.tecnicoList.collectAsState().value
+        composable("dashboard") { //Aqui se dirije al componente principal de mi aplicacion
+            DashboardScreen(navController = navController)
+        }
 
+        composable("tecnicoList") {
+            val tecnicoList = viewModel.tecnicoList.collectAsState().value
             TecnicoListScreen(
                 tecnicoList = tecnicoList,
                 onEdit = { tecnico ->
-                    navHostController.navigate(Screen.Tecnico(tecnico.TecnicoId))
+                    navController.navigate("tecnico/${tecnico.TecnicoId}")
                 },
                 onCreate = {
-                    navHostController.navigate(Screen.Tecnico(null))
+                    navController.navigate("tecnico/null")
                 },
                 onDelete = { tecnico ->
                     viewModel.delete(tecnico)
@@ -36,8 +39,9 @@ fun TecnicosNavHost(
             )
         }
 
-        composable<Screen.Tecnico> { backStackEntry ->
-            val tecnicoId = backStackEntry.toRoute<Screen.Tecnico>().tecnicoId
+        composable("tecnico/{tecnicoId}") { backStackEntry ->
+            val tecnicoIdParam = backStackEntry.arguments?.getString("tecnicoId")
+            val tecnicoId = tecnicoIdParam?.toIntOrNull()
             val tecnico = viewModel.getTecnicoById(tecnicoId)
 
             TecnicoScreen(
@@ -48,10 +52,10 @@ fun TecnicosNavHost(
                     } else {
                         viewModel.update(tecnico.copy(Nombre = nombre, Sueldo = sueldo))
                     }
-                    navHostController.popBackStack()
+                    navController.popBackStack()
                 },
                 onCancel = {
-                    navHostController.popBackStack()
+                    navController.popBackStack()
                 }
             )
         }
