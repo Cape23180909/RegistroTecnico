@@ -64,13 +64,14 @@ fun TecnicoListScreen(
                     )
                 )
                 .padding(paddingValues)
-                .padding(18.dp)
+                .padding(horizontal = 18.dp, vertical = 18.dp)
         ) {
             Text(
                 text = "Lista de Técnicos",
                 style = TextStyle(
                     fontSize = 23.sp,
                     fontWeight = FontWeight.Bold,
+                    color = Color(0xFF311B92),
                     textAlign = TextAlign.Center
                 ),
                 modifier = Modifier.fillMaxWidth()

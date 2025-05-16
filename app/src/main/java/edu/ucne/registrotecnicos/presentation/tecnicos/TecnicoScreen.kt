@@ -32,8 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPerfettoCaptureApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TecnicoScreen(
     tecnico: TecnicoEntity?,
@@ -48,101 +47,103 @@ fun TecnicoScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ){}
                     Text(
                         text = if (tecnico == null) "Registrar Técnico" else "Editar Técnico",
                         style = TextStyle(
-                            fontSize = 23.sp,
+                            fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
-                },
+                }
             )
-
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFFF5F5F5), Color(0xFF7E57C2))
+                        colors = listOf(Color(0xFFEDE7F6), Color(0xFF7E57C2))
                     )
                 )
                 .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(20.dp),
+            contentAlignment = Alignment.TopCenter
         ) {
-            OutlinedTextField(
-                value = nombre,
-                onValueChange = { nombre = it },
-                label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = sueldo,
-                onValueChange = { sueldo = it },
-                label = { Text("Sueldo") },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-
-            error?.let {
-                Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Black.copy(alpha = 0.95f), shape = MaterialTheme.shapes.medium)
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
-                Button(
-                    onClick = {
-                        onCancel()
-                    },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Volver")
+                OutlinedTextField(
+                    value = nombre,
+                    onValueChange = { nombre = it },
+                    label = { Text("Nombre del técnico") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = sueldo,
+                    onValueChange = { sueldo = it },
+                    label = { Text("Sueldo mensual") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                error?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
                 }
-                Button(
-                    onClick = {
-                        when {
-                            nombre.isBlank() -> error = "El nombre es requerido"
-                            sueldo.isBlank() -> error = "El sueldo es requerido"
-                            else -> try {
-                                agregarTecnico(nombre, sueldo.toDouble())
-                            } catch (e: NumberFormatException) {
-                                error = "Ingrese un sueldo válido"
-                            }
-                        }
-                    },
-                    modifier = Modifier.weight(1f)
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Guardar")
+                    Button(
+                        onClick = { onCancel() },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp)
+                    ) {
+                        Text("Cancelar")
+                    }
+                    Button(
+                        onClick = {
+                            when {
+                                nombre.isBlank() -> error = "El nombre es requerido"
+                                sueldo.isBlank() -> error = "El sueldo es requerido"
+                                else -> try {
+                                    agregarTecnico(nombre, sueldo.toDouble())
+                                } catch (e: NumberFormatException) {
+                                    error = "Ingrese un sueldo válido"
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 8.dp)
+                    ) {
+                        Text("Guardar")
+                    }
                 }
             }
-
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun TecnicoScreenPreview_Nuevo() {
+fun TecnicoScreenPreview() {
     TecnicoScreen(
         tecnico = null,
-        agregarTecnico = { nombre, sueldo ->
-            println("Nuevo técnico: $nombre, $sueldo")
-        },
+        agregarTecnico = { nombre, sueldo -> println("Nuevo técnico: $nombre, $sueldo") },
         onCancel = { println("Cancelado") }
     )
 }
