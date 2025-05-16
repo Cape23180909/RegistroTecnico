@@ -22,7 +22,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -30,13 +31,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.ucne.registrotecnicos.data.entities.TecnicoEntity
 
 @Composable
 fun TecnicoListScreen(
-    tecnicoList: SnapshotStateList<TecnicoEntity>,
+    tecnicoList: List<TecnicoEntity>,
     onCreate: () -> Unit,
     onDelete: (TecnicoEntity) -> Unit,
     onEdit: (TecnicoEntity) -> Unit
@@ -58,8 +60,7 @@ fun TecnicoListScreen(
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFFF5F5F5), Color(0xFF7E57C2
-                        ))
+                        colors = listOf(Color(0xFFF5F5F5), Color(0xFF7E57C2))
                     )
                 )
                 .padding(paddingValues)
@@ -116,8 +117,7 @@ fun TecnicoRow(
 
             Row {
                 IconButton(onClick = { onEdit(tecnico) }) {
-                    Icon(Icons.Filled.Edit, contentDescription = "Editar", tint = Color(0xFF4CAF50
-                    )) // Verde
+                    Icon(Icons.Filled.Edit, contentDescription = "Editar", tint = Color(0xFF4CAF50))
                 }
                 IconButton(onClick = { onDelete(tecnico) }) {
                     Icon(Icons.Filled.Delete, contentDescription = "Eliminar", tint = Color.Red)
@@ -125,4 +125,23 @@ fun TecnicoRow(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TecnicoListScreenPreview() {
+    val sampleTecnicos = remember {
+        mutableStateListOf(
+            TecnicoEntity(Nombre = "Juan Pérez", Sueldo = 25000.0),
+            TecnicoEntity(Nombre = "María García", Sueldo = 28000.0),
+            TecnicoEntity(Nombre = "Carlos López", Sueldo = 32000.0)
+        )
+    }
+
+    TecnicoListScreen(
+        tecnicoList = sampleTecnicos,
+        onCreate = { sampleTecnicos.add(TecnicoEntity(Nombre = "Nuevo Técnico", Sueldo = 30000.0)) },
+        onDelete = { tecnico -> sampleTecnicos.remove(tecnico) },
+        onEdit = { /* Simulación de edición */ }
+    )
 }
