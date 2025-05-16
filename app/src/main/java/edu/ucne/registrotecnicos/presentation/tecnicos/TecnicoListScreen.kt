@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import edu.ucne.registrotecnicos.data.entities.TecnicoEntity
+import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
 
 @Composable
 fun TecnicoListScreen(

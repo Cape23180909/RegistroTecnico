@@ -1,4 +1,4 @@
-package edu.ucne.registrotecnicos.data.entities
+package edu.ucne.registrotecnicos.data.local.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

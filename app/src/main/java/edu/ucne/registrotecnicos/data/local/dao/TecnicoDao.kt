@@ -1,11 +1,11 @@
-package edu.ucne.registrotecnicos.data.dao
+package edu.ucne.registrotecnicos.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
-import edu.ucne.registrotecnicos.data.entities.TecnicoEntity
+import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

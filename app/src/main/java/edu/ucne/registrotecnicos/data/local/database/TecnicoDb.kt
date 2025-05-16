@@ -1,9 +1,9 @@
-package edu.ucne.registrotecnicos.data.database
+package edu.ucne.registrotecnicos.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import edu.ucne.registrotecnicos.data.dao.TecnicoDao
-import edu.ucne.registrotecnicos.data.entities.TecnicoEntity
+import edu.ucne.registrotecnicos.data.local.dao.TecnicoDao
+import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
 
 @Database(
     entities = [

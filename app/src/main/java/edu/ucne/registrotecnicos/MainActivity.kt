@@ -6,8 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
-import edu.ucne.registrotecnicos.data.database.TecnicoDb
-import edu.ucne.registrotecnicos.data.repository.TecnicoRepository
+import edu.ucne.registrotecnicos.data.local.database.TecnicoDb
+import edu.ucne.registrotecnicos.data.local.repository.TecnicoRepository
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoViewModel
 import edu.ucne.registrotecnicos.presentation.navigation.TecnicosNavHost
 import edu.ucne.registrotecnicos.ui.theme.RegistroTecnicosTheme

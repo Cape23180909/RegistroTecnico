@@ -2,8 +2,8 @@ package edu.ucne.registrotecnicos.presentation.tecnicos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import edu.ucne.registrotecnicos.data.entities.TecnicoEntity
-import edu.ucne.registrotecnicos.data.repository.TecnicoRepository
+import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
+import edu.ucne.registrotecnicos.data.local.repository.TecnicoRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn

@@ -1,7 +1,7 @@
-package edu.ucne.registrotecnicos.data.repository
+package edu.ucne.registrotecnicos.data.local.repository
 
-import edu.ucne.registrotecnicos.data.dao.TecnicoDao
-import edu.ucne.registrotecnicos.data.entities.TecnicoEntity
+import edu.ucne.registrotecnicos.data.local.dao.TecnicoDao
+import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
 import kotlinx.coroutines.flow.Flow
 
 class TecnicoRepository(
