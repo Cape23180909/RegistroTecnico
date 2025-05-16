@@ -1,4 +1,4 @@
-package edu.ucne.registrotecnicos.presentation
+package edu.ucne.registrotecnicos.presentation.tecnicos
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

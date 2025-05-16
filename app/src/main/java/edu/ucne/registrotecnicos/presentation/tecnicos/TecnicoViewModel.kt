@@ -1,4 +1,4 @@
-package edu.ucne.registrotecnicos.presentation
+package edu.ucne.registrotecnicos.presentation.tecnicos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

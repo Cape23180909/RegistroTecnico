@@ -7,8 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import edu.ucne.registrotecnicos.presentation.TecnicoListScreen
-import edu.ucne.registrotecnicos.presentation.TecnicoViewModel
+import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoListScreen
+import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoViewModel
 
 @Composable
 fun TecnicosNavHost(
