@@ -3,12 +3,16 @@ package edu.ucne.registrotecnicos.presentation.navigation
 import TecnicoScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 import edu.ucne.registrotecnicos.presentation.dashboard.DashboardScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoListScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoViewModel
+import edu.ucne.registrotecnicos.presentation.tickets.TicketListScreen
+import edu.ucne.registrotecnicos.presentation.tickets.TicketViewModel
 
 @Composable
 fun TecnicosNavHost(
@@ -56,6 +60,24 @@ fun TecnicosNavHost(
                 },
                 onCancel = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        composable("ticketList") {
+            val ticketViewModel: TicketViewModel = hiltViewModel()
+            val ticketList = ticketViewModel.ticketList.collectAsState().value
+
+            TicketListScreen(
+                ticketList = ticketList,
+                onEdit = { ticket ->
+                    navController.navigate("ticket/${ticket.TicketId}")
+                },
+                onCreate = {
+                    navController.navigate("ticket/null")
+                },
+                onDelete = { ticket ->
+                    ticketViewModel.delete(ticket)
                 }
             )
         }
