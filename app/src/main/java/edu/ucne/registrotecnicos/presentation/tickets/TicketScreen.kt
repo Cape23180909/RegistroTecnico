@@ -77,7 +77,7 @@ fun TicketScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White.copy(alpha = 0.95f), shape = MaterialTheme.shapes.medium)
+                    .background(Color.Black.copy(alpha = 0.95f), shape = MaterialTheme.shapes.medium)
                     .padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
