@@ -99,78 +99,89 @@ fun TicketScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                // Campo Prioridad con Dropdown
-                OutlinedTextField(
-                    value = prioridad,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Prioridad") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { prioridadMenuExpanded = true },
-                    trailingIcon = {
-                        Text(
-                            text = "▼",
-                            modifier = Modifier.clickable { prioridadMenuExpanded = true },
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
-                    },
-                    enabled = false
-                )
-                DropdownMenu(
+                // Campo Prioridad con ExposedDropdownMenu
+                ExposedDropdownMenuBox(
                     expanded = prioridadMenuExpanded,
-                    onDismissRequest = { prioridadMenuExpanded = false },
+                    onExpandedChange = { prioridadMenuExpanded = !prioridadMenuExpanded },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    prioridades.forEach { t ->
-                        DropdownMenuItem(
-                            text = { Text(t) },
-                            onClick = {
-                                prioridad = t
-                                prioridadMenuExpanded = false
-                            }
-                        )
+                    OutlinedTextField(
+                        value = prioridad,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Prioridad", color = Color.White) },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = prioridadMenuExpanded)
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            focusedBorderColor = Color.White,
+                            unfocusedBorderColor = Color.LightGray,
+                            focusedLabelColor = Color.White,
+                            unfocusedLabelColor = Color.White.copy(alpha = 0.6f)
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = prioridadMenuExpanded,
+                        onDismissRequest = { prioridadMenuExpanded = false }
+                    ) {
+                        prioridades.forEach { item ->
+                            DropdownMenuItem(
+                                text = { Text(item, color = Color.Black) },
+                                onClick = {
+                                    prioridad = item
+                                    prioridadMenuExpanded = false
+                                }
+                            )
+                        }
                     }
                 }
 
-                // Campo Técnico (solo si deseas seleccionar un técnico de una lista)
-                // Campo Técnico con Dropdown
-                OutlinedTextField(
-                    value = tecnicoSeleccionado.value?.Nombre ?: "Seleccionar Técnico",
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Técnico") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { tecnicoMenuExpanded = true },
-                    trailingIcon = {
-                        Text(
-                            text = "▼",
-                            modifier = Modifier.clickable { tecnicoMenuExpanded = true },
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
-                    },
-                    enabled = false
-                )
-
-                DropdownMenu(
-
+                // Campo Técnico con ExposedDropdownMenu
+                ExposedDropdownMenuBox(
                     expanded = tecnicoMenuExpanded,
-                    onDismissRequest = { tecnicoMenuExpanded = false },
+                    onExpandedChange = { tecnicoMenuExpanded = !tecnicoMenuExpanded },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    tecnicosDisponibles.forEach { tecnicoItem ->
-                        DropdownMenuItem(
-                            text = { Text(tecnicoItem.Nombre) },
-                            onClick = {
-                                tecnicoSeleccionado.value = tecnicoItem
-                                tecnicoMenuExpanded = false
-                            }
-                        )
+                    OutlinedTextField(
+                        value = tecnicoSeleccionado.value?.Nombre ?: "Seleccionar Técnico",
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Técnico", color = Color.White) },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = tecnicoMenuExpanded)
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            focusedBorderColor = Color.White,
+                            unfocusedBorderColor = Color.White,
+                            focusedLabelColor = Color.White,
+                            unfocusedLabelColor = Color.White.copy(alpha = 0.6f)
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = tecnicoMenuExpanded,
+                        onDismissRequest = { tecnicoMenuExpanded = false }
+                    ) {
+                        tecnicosDisponibles.forEach { tecnicoItem ->
+                            DropdownMenuItem(
+                                text = { Text(tecnicoItem.Nombre, color = Color.Black) },
+                                onClick = {
+                                    tecnicoSeleccionado.value = tecnicoItem
+                                    tecnicoMenuExpanded = false
+                                }
+                            )
+                        }
                     }
                 }
 
