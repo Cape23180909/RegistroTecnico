@@ -85,9 +85,11 @@ fun TecnicosNavHost(
             val ticketIdParam = backStackEntry.arguments?.getString("ticketId")
             val ticketId = if (ticketIdParam == "null") null else ticketIdParam?.toIntOrNull()
             val ticket = ticketViewModel.getTicketById(ticketId)
+            val tecnicosDisponibles = tecnicoViewModel.tecnicoList.collectAsState().value
 
             TicketScreen(
                 ticket = ticket,
+                tecnicosDisponibles = tecnicosDisponibles,
                 agregarTicket = { fecha, cliente, asunto, descripcion, prioridad, tecnicoId ->
                     if (ticket == null) {
                         ticketViewModel.agregarTicket(
@@ -106,5 +108,5 @@ fun TecnicosNavHost(
                 }
             )
         }
-        }
     }
+}
