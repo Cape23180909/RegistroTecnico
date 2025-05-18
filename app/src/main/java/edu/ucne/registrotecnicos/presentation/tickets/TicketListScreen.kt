@@ -115,7 +115,7 @@ fun TicketRow(
                     Text(text = ticket.Prioridad ?: "No asignada", fontSize = 16.sp)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Tecnico: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(text = "Técnico: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     Text(text = ticket.TecnicoId?.toString() ?: "No asignada", fontSize = 16.sp)
                 }
             }
