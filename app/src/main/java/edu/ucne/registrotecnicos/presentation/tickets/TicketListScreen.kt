@@ -65,7 +65,7 @@ fun TicketListScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.padding(top = 39.dp))
+            Spacer(modifier = Modifier.height(39.dp))
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(18.dp)) {
                 items(TicketList) { ticket ->
@@ -110,6 +110,14 @@ fun TicketRow(
                     Text(text = "Descripcion: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     Text(text = ticket.Descripcion, fontSize = 16.sp)
                 }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "Prioridad: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(text = ticket.Prioridad ?: "No asignada", fontSize = 16.sp)
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "Tecnico: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(text = ticket.TecnicoId?.toString() ?: "No asignada", fontSize = 16.sp)
+                }
             }
 
             Row {
@@ -129,9 +137,9 @@ fun TicketRow(
 fun TicketListScreenPreview() {
     val sampleTickets = remember {
         mutableStateListOf(
-            TicketEntity(Fecha = "2024-05-16", Cliente = "Juan Pérez", Asunto = "Revisión", Descripcion = "Equipo no enciende"),
-            TicketEntity(Fecha = "2024-05-17", Cliente = "María García", Asunto = "Instalación", Descripcion = "Configurar impresora"),
-            TicketEntity(Fecha = "2024-05-18", Cliente = "Carlos López", Asunto = "Mantenimiento", Descripcion = "Limpieza de sistema")
+            TicketEntity(Fecha = "2024-05-16", Cliente = "Juan Pérez", Asunto = "Revisión", Descripcion = "Equipo no enciende", Prioridad = ""),
+            TicketEntity(Fecha = "2024-05-17", Cliente = "María García", Asunto = "Instalación", Descripcion = "Configurar impresora", Prioridad = ""),
+            TicketEntity(Fecha = "2024-05-18", Cliente = "Carlos López", Asunto = "Mantenimiento", Descripcion = "Limpieza de sistema", Prioridad = "", TecnicoId = null)
         )
     }
 
@@ -143,7 +151,9 @@ fun TicketListScreenPreview() {
                     Fecha = "2024-05-19",
                     Cliente = "Nuevo Cliente",
                     Asunto = "Consulta",
-                    Descripcion = "Consulta general"
+                    Descripcion = "Consulta general",
+                    Prioridad = "",
+                    TecnicoId = null
                 )
             )
         },
