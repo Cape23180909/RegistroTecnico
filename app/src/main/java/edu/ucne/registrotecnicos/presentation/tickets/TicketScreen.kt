@@ -158,6 +158,7 @@ fun TicketScreen(
                 )
 
                 DropdownMenu(
+
                     expanded = tecnicoMenuExpanded,
                     onDismissRequest = { tecnicoMenuExpanded = false },
                     modifier = Modifier.fillMaxWidth()
