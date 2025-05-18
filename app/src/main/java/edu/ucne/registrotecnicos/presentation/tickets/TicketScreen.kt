@@ -14,12 +14,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
 import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TicketScreen(
     ticket: TicketEntity?,
+    tecnicosDisponibles: List<TecnicoEntity>,
     agregarTicket: (String, String, String, String, String, Int?) -> Unit,
     onCancel: () -> Unit
 ) {
@@ -34,7 +36,7 @@ fun TicketScreen(
     var error by remember { mutableStateOf<String?>(null) }
 
     val prioridades = listOf("Alta", "Media", "Baja")
-    val tecnicos = listOf("1", "2", "3") // Simulación: reemplaza con lista real si lo deseas
+    val tecnicoSeleccionado = remember { mutableStateOf<TecnicoEntity?>(null) }
 
     Scaffold(
         topBar = {
@@ -134,11 +136,12 @@ fun TicketScreen(
                 }
 
                 // Campo Técnico (solo si deseas seleccionar un técnico de una lista)
+                // Campo Técnico con Dropdown
                 OutlinedTextField(
-                    value = tecnico,
+                    value = tecnicoSeleccionado.value?.Nombre ?: "Seleccionar Técnico",
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Técnico ID") },
+                    label = { Text("Técnico") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { tecnicoMenuExpanded = true },
@@ -153,16 +156,17 @@ fun TicketScreen(
                     },
                     enabled = false
                 )
+
                 DropdownMenu(
                     expanded = tecnicoMenuExpanded,
                     onDismissRequest = { tecnicoMenuExpanded = false },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    tecnicos.forEach { id ->
+                    tecnicosDisponibles.forEach { tecnicoItem ->
                         DropdownMenuItem(
-                            text = { Text("Técnico $id") },
+                            text = { Text(tecnicoItem.Nombre) },
                             onClick = {
-                                tecnico = id
+                                tecnicoSeleccionado.value = tecnicoItem
                                 tecnicoMenuExpanded = false
                             }
                         )
@@ -198,7 +202,7 @@ fun TicketScreen(
                                 asunto.isBlank() -> error = "El asunto es requerido"
                                 descripcion.isBlank() -> error = "La descripción es requerida"
                                 prioridad.isBlank() -> error = "Debes seleccionar una prioridad"
-                                tecnico.isBlank() -> error = "Debes seleccionar un técnico"
+                                tecnicoSeleccionado.value == null -> error = "Debes seleccionar un técnico"
                                 else -> {
                                     error = null
                                     agregarTicket(
@@ -207,7 +211,7 @@ fun TicketScreen(
                                         asunto,
                                         descripcion,
                                         prioridad,
-                                        tecnico.toIntOrNull()
+                                        tecnicoSeleccionado.value?.TecnicoId
                                     )
                                 }
                             }
@@ -229,6 +233,10 @@ fun TicketScreen(
 fun TicketScreenPreview() {
     TicketScreen(
         ticket = null,
+        tecnicosDisponibles = listOf(
+            TecnicoEntity(TecnicoId = 1, Nombre = "Juan Pérez"),
+            TecnicoEntity(TecnicoId = 2, Nombre = "Ana Gómez")
+        ),
         agregarTicket = { fecha, cliente, asunto, descripcion, prioridad, tecnicoId ->
             println("Nuevo ticket: $fecha, $cliente, $asunto, $descripcion, Prioridad: $prioridad, TécnicoId: $tecnicoId")
         },
