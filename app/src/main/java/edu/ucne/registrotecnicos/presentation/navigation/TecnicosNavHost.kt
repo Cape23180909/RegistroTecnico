@@ -66,9 +66,10 @@ fun TecnicosNavHost(
 
         composable("ticketList") {
             val ticketList = ticketViewModel.ticketList.collectAsState().value
-
+            val tecnicosDisponibles = tecnicoViewModel.tecnicoList.collectAsState().value
             TicketListScreen(
                 TicketList = ticketList,
+                tecnicos = tecnicosDisponibles,
                 onEdit = { ticket ->
                     navController.navigate("ticket/${ticket.TicketId}")
                 },
