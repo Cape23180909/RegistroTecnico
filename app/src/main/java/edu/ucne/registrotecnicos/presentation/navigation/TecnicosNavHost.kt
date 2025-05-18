@@ -3,11 +3,9 @@ package edu.ucne.registrotecnicos.presentation.navigation
 import TecnicoScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 import edu.ucne.registrotecnicos.presentation.dashboard.DashboardScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoListScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoViewModel
@@ -90,11 +88,16 @@ fun TecnicosNavHost(
 
             TicketScreen(
                 ticket = ticket,
-                agregarTicket = { fecha, cliente, asunto, descripcion ->
+                agregarTicket = { fecha, cliente, asunto, descripcion, prioridad, tecnicoId ->
                     if (ticket == null) {
-                        ticketViewModel.agregarTicket(fecha, cliente, asunto, descripcion)
-                    } else {
-                        ticketViewModel.update(ticket.copy(Fecha = fecha, Cliente = cliente, Asunto = asunto, Descripcion = descripcion))
+                        ticketViewModel.agregarTicket(
+                            fecha = fecha,
+                            cliente = cliente,
+                            asunto = asunto,
+                            descripcion = descripcion,
+                            prioridad = prioridad,
+                            tecnicoId = tecnicoId!!
+                        )
                     }
                     navController.popBackStack()
                 },
@@ -103,5 +106,5 @@ fun TecnicosNavHost(
                 }
             )
         }
+        }
     }
-}
