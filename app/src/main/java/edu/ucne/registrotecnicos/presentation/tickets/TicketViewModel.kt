@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TicketViewModel@Inject constructor(
-    private val repository: TicketRepository
+    private val repository: TicketRepository,
 ) : ViewModel() {
 
     // Exponemos la lista de tickets como StateFlow
@@ -19,13 +19,15 @@ class TicketViewModel@Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Agregar un nuevo ticket
-    fun agregarTicket(asunto: String, descripcion: String, fecha: String, cliente: String) {
+    fun agregarTicket(asunto: String, descripcion: String, fecha: String, cliente: String, prioridad: String, tecnicoId: Int) {
         val ticket = TicketEntity(
             TicketId = null,
             Fecha = fecha,
             Cliente = cliente,
             Asunto = asunto,
-            Descripcion = descripcion
+            Prioridad = prioridad,
+            Descripcion = descripcion,
+            TecnicoId = tecnicoId
         )
         saveTicket(ticket)
     }
