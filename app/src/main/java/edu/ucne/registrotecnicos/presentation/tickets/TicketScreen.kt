@@ -1,26 +1,10 @@
 package edu.ucne.registrotecnicos.presentation.tickets
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -31,20 +15,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
-import java.time.format.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TicketScreen(
     ticket: TicketEntity?,
-    agregarTicket: (String, String, String, String) -> Unit,
+    agregarTicket: (String, String, String, String, String, Int?) -> Unit,
     onCancel: () -> Unit
 ) {
     var fecha by remember { mutableStateOf(ticket?.Fecha ?: "") }
     var cliente by remember { mutableStateOf(ticket?.Cliente ?: "") }
     var asunto by remember { mutableStateOf(ticket?.Asunto ?: "") }
     var descripcion by remember { mutableStateOf(ticket?.Descripcion ?: "") }
+    var prioridad by remember { mutableStateOf(ticket?.Prioridad ?: "") }
+    var prioridadMenuExpanded by remember { mutableStateOf(false) }
+    var tecnico by remember { mutableStateOf(ticket?.TecnicoId?.toString() ?: "") }
+    var tecnicoMenuExpanded by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
+
+    val prioridades = listOf("Alta", "Media", "Baja")
+    val tecnicos = listOf("1", "2", "3") // Simulación: reemplaza con lista real si lo deseas
 
     Scaffold(
         topBar = {
@@ -103,9 +93,81 @@ fun TicketScreen(
                 OutlinedTextField(
                     value = descripcion,
                     onValueChange = { descripcion = it },
-                    label = { Text("Descripcion") },
+                    label = { Text("Descripción") },
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                // Campo Prioridad con Dropdown
+                OutlinedTextField(
+                    value = prioridad,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Prioridad") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { prioridadMenuExpanded = true },
+                    trailingIcon = {
+                        Text(
+                            text = "▼",
+                            modifier = Modifier.clickable { prioridadMenuExpanded = true },
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    },
+                    enabled = false
+                )
+                DropdownMenu(
+                    expanded = prioridadMenuExpanded,
+                    onDismissRequest = { prioridadMenuExpanded = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    prioridades.forEach { t ->
+                        DropdownMenuItem(
+                            text = { Text(t) },
+                            onClick = {
+                                prioridad = t
+                                prioridadMenuExpanded = false
+                            }
+                        )
+                    }
+                }
+
+                // Campo Técnico (solo si deseas seleccionar un técnico de una lista)
+                OutlinedTextField(
+                    value = tecnico,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Técnico ID") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { tecnicoMenuExpanded = true },
+                    trailingIcon = {
+                        Text(
+                            text = "▼",
+                            modifier = Modifier.clickable { tecnicoMenuExpanded = true },
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    },
+                    enabled = false
+                )
+                DropdownMenu(
+                    expanded = tecnicoMenuExpanded,
+                    onDismissRequest = { tecnicoMenuExpanded = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    tecnicos.forEach { id ->
+                        DropdownMenuItem(
+                            text = { Text("Técnico $id") },
+                            onClick = {
+                                tecnico = id
+                                tecnicoMenuExpanded = false
+                            }
+                        )
+                    }
+                }
 
                 error?.let {
                     Text(
@@ -127,6 +189,7 @@ fun TicketScreen(
                     ) {
                         Text("Cancelar")
                     }
+
                     Button(
                         onClick = {
                             when {
@@ -134,9 +197,18 @@ fun TicketScreen(
                                 cliente.isBlank() -> error = "El cliente es requerido"
                                 asunto.isBlank() -> error = "El asunto es requerido"
                                 descripcion.isBlank() -> error = "La descripción es requerida"
+                                prioridad.isBlank() -> error = "Debes seleccionar una prioridad"
+                                tecnico.isBlank() -> error = "Debes seleccionar un técnico"
                                 else -> {
                                     error = null
-                                    agregarTicket(fecha, cliente, asunto, descripcion)
+                                    agregarTicket(
+                                        fecha,
+                                        cliente,
+                                        asunto,
+                                        descripcion,
+                                        prioridad,
+                                        tecnico.toIntOrNull()
+                                    )
                                 }
                             }
                         },
@@ -157,8 +229,8 @@ fun TicketScreen(
 fun TicketScreenPreview() {
     TicketScreen(
         ticket = null,
-        agregarTicket = { fecha, cliente, asunto, descripcion ->
-            println("Nuevo ticket: $fecha, $cliente, $asunto, $descripcion")
+        agregarTicket = { fecha, cliente, asunto, descripcion, prioridad, tecnicoId ->
+            println("Nuevo ticket: $fecha, $cliente, $asunto, $descripcion, Prioridad: $prioridad, TécnicoId: $tecnicoId")
         },
         onCancel = { println("Cancelado") }
     )
