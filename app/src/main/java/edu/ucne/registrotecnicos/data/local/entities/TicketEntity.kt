@@ -11,4 +11,6 @@ data class TicketEntity(
     val Cliente: String= "",
     val Asunto: String= "",
     val Descripcion: String= "",
-    )
+    val TecnicoId: Int? = null,
+    val Prioridad: String
+)
