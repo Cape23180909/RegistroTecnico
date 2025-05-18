@@ -42,64 +42,92 @@ fun DashboardScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFFF5F5F5), Color(0xFF7E57C2))
-                    )
-                )
+                .background(Color(0xFFF5F5F5))
                 .padding(innerPadding)
-                .padding(horizontal = 24.dp, vertical = 20.dp),
+                .padding(horizontal = 24.dp, vertical = 32.dp),
             verticalArrangement = Arrangement.spacedBy(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            Text(
-                text = "Gestión de Técnicos",
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF311B92),
-                    textAlign = TextAlign.Center
+            // Sección de Técnicos
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
                 ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedButton(
-                onClick = {
-                    navController.navigate("tecnicoList")
-                },
-                modifier = Modifier.fillMaxWidth()
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                Text(
-                    text = "Técnicos",
-                    modifier = Modifier.padding(8.dp),
-                    fontSize = 16.sp
-                )
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = "Gestión de Técnicos",
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF311B92),
+                            textAlign = TextAlign.Start
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    FilledTonalButton(
+                        onClick = { navController.navigate("tecnicoList") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.filledTonalButtonColors(
+                            containerColor = Color(0xFF673AB7),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "Técnicos",
+                            modifier = Modifier.padding(8.dp),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
             }
-            Spacer(modifier = Modifier.height(0.dp))
 
-            Text(
-                text = "Gestión de Tickets",
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF311B92),
-                    textAlign = TextAlign.Center
+            // Sección de Tickets
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
                 ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedButton(
-                onClick = {
-                    navController.navigate("ticketList") // Asegúrate de tener esta pantalla
-                },
-                modifier = Modifier.fillMaxWidth()
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                Text(
-                    text = "Tickets",
-                    modifier = Modifier.padding(8.dp),
-                    fontSize = 16.sp
-                )
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = "Gestión de Tickets",
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF311B92),
+                            textAlign = TextAlign.Start
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    FilledTonalButton(
+                        onClick = { navController.navigate("ticketList") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.filledTonalButtonColors(
+                            containerColor = Color(0xFF673AB7),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "Tickets",
+                            modifier = Modifier.padding(8.dp),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
             }
         }
     }
@@ -108,5 +136,7 @@ fun DashboardScreen(navController: NavController) {
 @Preview(showSystemUi = true)
 @Composable
 fun DashboardScreenPreview() {
-    DashboardScreen(navController = rememberNavController())
+    MaterialTheme {
+        DashboardScreen(navController = rememberNavController())
+    }
 }
