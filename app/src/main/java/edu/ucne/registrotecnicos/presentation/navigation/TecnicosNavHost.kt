@@ -12,12 +12,14 @@ import edu.ucne.registrotecnicos.presentation.dashboard.DashboardScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoListScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoViewModel
 import edu.ucne.registrotecnicos.presentation.tickets.TicketListScreen
+import edu.ucne.registrotecnicos.presentation.tickets.TicketScreen
 import edu.ucne.registrotecnicos.presentation.tickets.TicketViewModel
 
 @Composable
 fun TecnicosNavHost(
     navController: NavHostController,
-    viewModel: TecnicoViewModel
+    tecnicoViewModel: TecnicoViewModel,
+    ticketViewModel: TicketViewModel
 ) {
     NavHost(
         navController = navController,
@@ -28,7 +30,7 @@ fun TecnicosNavHost(
         }
 
         composable("tecnicoList") {
-            val tecnicoList = viewModel.tecnicoList.collectAsState().value
+            val tecnicoList =  tecnicoViewModel.tecnicoList.collectAsState().value
             TecnicoListScreen(
                 tecnicoList = tecnicoList,
                 onEdit = { tecnico ->
@@ -38,7 +40,7 @@ fun TecnicosNavHost(
                     navController.navigate("tecnico/null")
                 },
                 onDelete = { tecnico ->
-                    viewModel.delete(tecnico)
+                    tecnicoViewModel.delete(tecnico)
                 }
             )
         }
@@ -46,15 +48,15 @@ fun TecnicosNavHost(
         composable("tecnico/{tecnicoId}") { backStackEntry ->
             val tecnicoIdParam = backStackEntry.arguments?.getString("tecnicoId")
             val tecnicoId = tecnicoIdParam?.toIntOrNull()
-            val tecnico = viewModel.getTecnicoById(tecnicoId)
+            val tecnico =  tecnicoViewModel.getTecnicoById(tecnicoId)
 
             TecnicoScreen(
                 tecnico = tecnico,
                 agregarTecnico = { nombre, sueldo ->
                     if (tecnico == null) {
-                        viewModel.agregarTecnico(nombre, sueldo)
+                        tecnicoViewModel.agregarTecnico(nombre, sueldo)
                     } else {
-                        viewModel.update(tecnico.copy(Nombre = nombre, Sueldo = sueldo))
+                        tecnicoViewModel.update(tecnico.copy(Nombre = nombre, Sueldo = sueldo))
                     }
                     navController.popBackStack()
                 },
@@ -65,11 +67,10 @@ fun TecnicosNavHost(
         }
 
         composable("ticketList") {
-            val ticketViewModel: TicketViewModel = hiltViewModel()
             val ticketList = ticketViewModel.ticketList.collectAsState().value
 
             TicketListScreen(
-                ticketList = ticketList,
+                TicketList = ticketList,
                 onEdit = { ticket ->
                     navController.navigate("ticket/${ticket.TicketId}")
                 },
@@ -78,6 +79,27 @@ fun TecnicosNavHost(
                 },
                 onDelete = { ticket ->
                     ticketViewModel.delete(ticket)
+                }
+            )
+        }
+
+        composable("Ticket/{ticketId}") { backStackEntry ->
+            val ticketIdParam = backStackEntry.arguments?.getString("ticketId")
+            val ticketId = if (ticketIdParam == "null") null else ticketIdParam?.toIntOrNull()
+            val ticket = ticketViewModel.getTicketById(ticketId)
+
+            TicketScreen(
+                ticket = ticket,
+                agregarTicket = { fecha, cliente, asunto, descripcion ->
+                    if (ticket == null) {
+                        ticketViewModel.agregarTicket(fecha, cliente, asunto, descripcion)
+                    } else {
+                        ticketViewModel.update(ticket.copy(Fecha = fecha, Cliente = cliente, Asunto = asunto, Descripcion = descripcion))
+                    }
+                    navController.popBackStack()
+                },
+                onCancel = {
+                    navController.popBackStack()
                 }
             )
         }
