@@ -26,7 +26,7 @@ import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 
 @Composable
 fun TicketListScreen(
-    ticketList: List<TicketEntity>,
+    TicketList: List<TicketEntity>,
     onCreate: () -> Unit,
     onDelete: (TicketEntity) -> Unit,
     onEdit: (TicketEntity) -> Unit
@@ -68,7 +68,7 @@ fun TicketListScreen(
             Spacer(modifier = Modifier.padding(top = 39.dp))
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                items(ticketList) { ticket ->
+                items(TicketList) { ticket ->
                     TicketRow(ticket, onDelete, onEdit)
                 }
             }
@@ -136,7 +136,7 @@ fun TicketListScreenPreview() {
     }
 
     TicketListScreen(
-        ticketList = sampleTickets,
+        TicketList = sampleTickets,
         onCreate = {
             sampleTickets.add(
                 TicketEntity(

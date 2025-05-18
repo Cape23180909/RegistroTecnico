@@ -36,7 +36,7 @@ import java.time.format.TextStyle
 @Composable
 fun TicketScreen(
     ticket: TicketEntity?,
-    onSave: (String, String, String, String) -> Unit,
+    agregarTicket: (String, String, String, String) -> Unit,
     onCancel: () -> Unit
 ) {
     var fecha by remember { mutableStateOf(ticket?.Fecha ?: "") }
@@ -135,7 +135,7 @@ fun TicketScreen(
                                 descripcion.isBlank() -> error = "La descripción es requerida"
                                 else -> {
                                     error = null
-                                    onSave(fecha, cliente, asunto, descripcion)
+                                    agregarTicket(fecha, cliente, asunto, descripcion)
                                 }
                             }
                         },
@@ -156,7 +156,7 @@ fun TicketScreen(
 fun TicketScreenPreview() {
     TicketScreen(
         ticket = null,
-        onSave = { fecha, cliente, asunto, descripcion ->
+        agregarTicket = { fecha, cliente, asunto, descripcion ->
             println("Nuevo ticket: $fecha, $cliente, $asunto, $descripcion")
         },
         onCancel = { println("Cancelado") }
