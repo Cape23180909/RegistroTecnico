@@ -22,11 +22,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
 import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 
 @Composable
 fun TicketListScreen(
     TicketList: List<TicketEntity>,
+    tecnicos: List<TecnicoEntity>,
     onCreate: () -> Unit,
     onDelete: (TicketEntity) -> Unit,
     onEdit: (TicketEntity) -> Unit
@@ -69,7 +71,8 @@ fun TicketListScreen(
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(18.dp)) {
                 items(TicketList) { ticket ->
-                    TicketRow(ticket, onDelete, onEdit)
+                    val tecnicoNombre = tecnicos.find { it.TecnicoId == ticket.TecnicoId }?.Nombre ?: "No asignado"
+                    TicketRow(ticket, tecnicoNombre, onDelete, onEdit)
                 }
             }
         }
@@ -79,6 +82,7 @@ fun TicketListScreen(
 @Composable
 fun TicketRow(
     ticket: TicketEntity,
+    tecnicoNombre: String,
     onDelete: (TicketEntity) -> Unit,
     onEdit: (TicketEntity) -> Unit
 ) {
@@ -116,7 +120,7 @@ fun TicketRow(
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "Técnico: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text(text = ticket.TecnicoId?.toString() ?: "No asignada", fontSize = 16.sp)
+                    Text(text = tecnicoNombre, fontSize = 16.sp)
                 }
             }
 
@@ -137,14 +141,20 @@ fun TicketRow(
 fun TicketListScreenPreview() {
     val sampleTickets = remember {
         mutableStateListOf(
-            TicketEntity(Fecha = "2024-05-16", Cliente = "Juan Pérez", Asunto = "Revisión", Descripcion = "Equipo no enciende", Prioridad = ""),
-            TicketEntity(Fecha = "2024-05-17", Cliente = "María García", Asunto = "Instalación", Descripcion = "Configurar impresora", Prioridad = ""),
+            TicketEntity(Fecha = "2024-05-16", Cliente = "Juan Pérez", Asunto = "Revisión", Descripcion = "Equipo no enciende", Prioridad = "", TecnicoId = 1),
+            TicketEntity(Fecha = "2024-05-17", Cliente = "María García", Asunto = "Instalación", Descripcion = "Configurar impresora", Prioridad = "", TecnicoId = 2),
             TicketEntity(Fecha = "2024-05-18", Cliente = "Carlos López", Asunto = "Mantenimiento", Descripcion = "Limpieza de sistema", Prioridad = "", TecnicoId = null)
         )
     }
 
+    val sampleTecnicos = listOf(
+        TecnicoEntity(TecnicoId = 1, Nombre = "Pedro Sánchez"),
+        TecnicoEntity(TecnicoId = 2, Nombre = "Ana Martínez")
+    )
+
     TicketListScreen(
         TicketList = sampleTickets,
+        tecnicos = sampleTecnicos,
         onCreate = {
             sampleTickets.add(
                 TicketEntity(
