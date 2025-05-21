@@ -19,9 +19,9 @@ class TicketViewModel@Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Agregar un nuevo ticket
-    fun agregarTicket(asunto: String, descripcion: String, fecha: String, cliente: String, prioridad: String, tecnicoId: Int) {
+    fun agregarTicket(ticketId: Int?, asunto: String, descripcion: String, fecha: String, cliente: String, prioridad: String, tecnicoId: Int) {
         val ticket = TicketEntity(
-            TicketId = null,
+            TicketId = ticketId,
             Fecha = fecha,
             Cliente = cliente,
             Asunto = asunto,
