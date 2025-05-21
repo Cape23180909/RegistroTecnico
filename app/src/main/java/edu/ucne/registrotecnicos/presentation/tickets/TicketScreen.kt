@@ -22,7 +22,7 @@ import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 fun TicketScreen(
     ticket: TicketEntity?,
     tecnicosDisponibles: List<TecnicoEntity>,
-    agregarTicket: (String, String, String, String, String, Int?) -> Unit,
+    saveTicket: (Int?, String, String, String, String, String, Int?) -> Unit,
     onCancel: () -> Unit
 ) {
     var fecha by remember { mutableStateOf(ticket?.Fecha ?: "") }
@@ -217,7 +217,8 @@ fun TicketScreen(
                                 tecnicoSeleccionado.value == null -> error = "Debes seleccionar un técnico"
                                 else -> {
                                     error = null
-                                    agregarTicket(
+                                    saveTicket(
+                                        ticket?.TicketId,
                                         fecha,
                                         cliente,
                                         asunto,
@@ -249,8 +250,8 @@ fun TicketScreenPreview() {
             TecnicoEntity(TecnicoId = 1, Nombre = "Juan Pérez"),
             TecnicoEntity(TecnicoId = 2, Nombre = "Ana Gómez")
         ),
-        agregarTicket = { fecha, cliente, asunto, descripcion, prioridad, tecnicoId ->
-            println("Nuevo ticket: $fecha, $cliente, $asunto, $descripcion, Prioridad: $prioridad, TécnicoId: $tecnicoId")
+        saveTicket = { fecha, cliente, asunto, descripcion, prioridad, estado, tecnicoId ->
+            println("Nuevo ticket: $fecha, $cliente, $asunto, $descripcion, Prioridad: $prioridad, Estado: $estado, TécnicoId: $tecnicoId")
         },
         onCancel = { println("Cancelado") }
     )
