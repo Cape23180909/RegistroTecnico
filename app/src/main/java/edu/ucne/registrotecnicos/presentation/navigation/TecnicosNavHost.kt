@@ -91,9 +91,10 @@ fun TecnicosNavHost(
             TicketScreen(
                 ticket = ticket,
                 tecnicosDisponibles = tecnicosDisponibles,
-                agregarTicket = { fecha, cliente, asunto, descripcion, prioridad, tecnicoId ->
+                saveTicket = { ticketId, fecha, cliente, asunto, descripcion, prioridad, tecnicoId ->
                     if (ticket == null) {
                         ticketViewModel.agregarTicket(
+                            ticketId = null,
                             fecha = fecha,
                             cliente = cliente,
                             asunto = asunto,
@@ -101,9 +102,21 @@ fun TecnicosNavHost(
                             prioridad = prioridad,
                             tecnicoId = tecnicoId!!
                         )
+                    } else {
+                        ticketViewModel.update(
+                            ticket.copy(
+                                Fecha = fecha,
+                                Cliente = cliente,
+                                Asunto = asunto,
+                                Descripcion = descripcion,
+                                Prioridad = prioridad,
+                                TecnicoId = tecnicoId
+                            )
+                        )
                     }
                     navController.popBackStack()
                 },
+
                 onCancel = {
                     navController.popBackStack()
                 }
