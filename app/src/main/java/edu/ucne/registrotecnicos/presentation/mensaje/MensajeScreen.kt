@@ -1,5 +1,7 @@
 package edu.ucne.registrotecnicos.presentation.mensaje
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,7 +20,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.ucne.registrotecnicos.data.local.entities.MensajeEntity
 import edu.ucne.registrotecnicos.presentation.navigation.UiState
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MensajeScreen(
     uiState: UiState,
@@ -121,8 +127,22 @@ fun MensajeScreen(
 }
 
 // Componente personalizado para mostrar un mensaje
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MensajeCard(mensaje: MensajeEntity) {
+    // Formateador para parsear la fecha original
+    val originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    // Formateador para mostrar la fecha
+    val displayFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+
+    // Intentamos parsear y formatear la fecha, si falla usamos el texto original
+    val fechaFormateada = try {
+        val fechaParseada = LocalDateTime.parse(mensaje.fecha, originalFormatter)
+        fechaParseada.format(displayFormatter)
+    } catch (e: DateTimeParseException) {
+        mensaje.fecha // fallback en caso de error
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -139,18 +159,37 @@ fun MensajeCard(mensaje: MensajeEntity) {
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
             )
             Text(
-                text = "Rol: ${mensaje.rol}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
                 text = "Descripción: ${mensaje.descripcion}",
                 style = MaterialTheme.typography.bodySmall
             )
-            mensaje.fecha?.let {
-                Text(
-                    text = "Fecha: $it",
-                    style = MaterialTheme.typography.bodySmall
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Fecha: $fechaFormateada",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .background(
+                            when (mensaje.rol) {
+                                "Owner" -> Color.Green
+                                "Operator" -> Color.Blue
+                                else -> Color.Gray
+                            }
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = mensaje.rol,
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
         }
     }
@@ -202,6 +241,7 @@ fun Circle(isSelected: Boolean, modifier: Modifier = Modifier) {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun PreviewMensajeScreen() {
@@ -209,15 +249,15 @@ fun PreviewMensajeScreen() {
         MensajeEntity(
             mensajeId = 1,
             descripcion = "Mensaje de prueba número uno",
-            fecha = "2025-07-21 15:30:00",
-            rol = "Administrador",
+            fecha = "",
+            rol = "Owner",
             nombre = "Carlos López"
         ),
         MensajeEntity(
             mensajeId = 2,
             descripcion = "Mensaje de prueba número dos",
-            fecha = "2025-07-21 16:45:00",
-            rol = "Técnico",
+            fecha = "",
+            rol = "Operator",
             nombre = "Ana Pérez"
         )
     )
