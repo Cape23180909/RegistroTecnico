@@ -35,6 +35,7 @@ fun MensajeScreen(
     onBack: () -> Unit
 ) {
     var selectedRole by remember { mutableStateOf("Operator") }
+    var error by remember { mutableStateOf<String?>(null) }
 
     Box(
         modifier = Modifier
@@ -49,7 +50,7 @@ fun MensajeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .padding(bottom = 16.dp) // Evita que el botón choque con íconos del sistema
+                .padding(bottom = 16.dp)
         ) {
 
             // Lista de mensajes existentes
@@ -63,7 +64,6 @@ fun MensajeScreen(
                 }
             }
 
-            // Espaciador entre la lista y el formulario
             Spacer(modifier = Modifier.height(16.dp))
 
             // Opciones de rol
@@ -87,11 +87,10 @@ fun MensajeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(80.dp)
-                    .background(Color.Black), // Agregamos esto para hacer el fondo blanco
+                    .background(Color.Black),
                 singleLine = false
             )
 
-            // Espaciador
             Spacer(modifier = Modifier.height(16.dp))
 
             // Área de mensaje
@@ -105,28 +104,68 @@ fun MensajeScreen(
                 singleLine = false
             )
 
-            // Espaciador reducido
+            // Mensaje de error si existe
+            error?.let {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Botón de guardar
-            Button(
-                onClick = onSave,
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 96.dp)
-                    .height(54.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    .padding(top = 16.dp, bottom = 96.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = "Guardar Mensaje",
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
+                Button(
+                    onClick = onBack,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(54.dp)
+                        .padding(end = 8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = MaterialTheme.shapes.medium,
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
+                ) {
+                    Text(text = "Cancelar")
+                }
+
+                Button(
+                    onClick = {
+                        when {
+                            uiState.nombre.isBlank() -> error = "El nombre es requerido"
+                            uiState.descripcion.isBlank() -> error = "El mensaje es requerido"
+                            else -> {
+                                error = null
+                                onSave()
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(54.dp)
+                        .padding(start = 8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = MaterialTheme.shapes.medium,
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
+                ) {
+                    Text(text = "Guardar")
+                }
             }
         }
     }
 }
 
-// Componente personalizado para mostrar un mensaje
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MensajeCard(mensaje: MensajeEntity) {
@@ -249,16 +288,16 @@ fun PreviewMensajeScreen() {
         MensajeEntity(
             mensajeId = 1,
             descripcion = "Mensaje de prueba número uno",
-            fecha = "",
+            fecha = "22-5-2025",
             rol = "Owner",
-            nombre = "Carlos López"
+            nombre = "Carlos Reyes"
         ),
         MensajeEntity(
             mensajeId = 2,
             descripcion = "Mensaje de prueba número dos",
-            fecha = "",
+            fecha = "22-5-2025",
             rol = "Operator",
-            nombre = "Ana Pérez"
+            nombre = "Juan Pérez"
         )
     )
 
