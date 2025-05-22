@@ -21,13 +21,13 @@ class TicketViewModel@Inject constructor(
     // Agregar un nuevo ticket
     fun agregarTicket(ticketId: Int?, asunto: String, descripcion: String, fecha: String, cliente: String, prioridad: String, tecnicoId: Int) {
         val ticket = TicketEntity(
-            TicketId = ticketId,
-            Fecha = fecha,
-            Cliente = cliente,
-            Asunto = asunto,
-            Prioridad = prioridad,
-            Descripcion = descripcion,
-            TecnicoId = tecnicoId
+            ticketId = ticketId,
+            fecha = fecha,
+            cliente = cliente,
+            asunto = asunto,
+            prioridad = prioridad,
+            descripcion = descripcion,
+            tecnicoId = tecnicoId
         )
         saveTicket(ticket)
     }
@@ -53,6 +53,6 @@ class TicketViewModel@Inject constructor(
 
     // Buscar ticket por ID en la lista actual
     fun getTicketById(id: Int?): TicketEntity? {
-        return ticketList.value.find { it.TicketId == id }
+        return ticketList.value.find { it.ticketId == id }
     }
 }

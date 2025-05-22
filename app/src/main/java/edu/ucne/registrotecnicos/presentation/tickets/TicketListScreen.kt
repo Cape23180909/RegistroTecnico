@@ -71,7 +71,7 @@ fun TicketListScreen(
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(18.dp)) {
                 items(TicketList) { ticket ->
-                    val tecnicoNombre = tecnicos.find { it.TecnicoId == ticket.TecnicoId }?.Nombre ?: "No asignado"
+                    val tecnicoNombre = tecnicos.find { it.tecnicoId == ticket.tecnicoId }?.nombre ?: "No asignado"
                     TicketRow(ticket, tecnicoNombre, onDelete, onEdit)
                 }
             }
@@ -100,23 +100,23 @@ fun TicketRow(
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "Cliente: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text(text = ticket.Cliente, fontSize = 16.sp)
+                    Text(text = ticket.cliente, fontSize = 16.sp)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "Fecha: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text(text = ticket.Fecha, fontSize = 16.sp)
+                    Text(text = ticket.fecha, fontSize = 16.sp)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "Asunto: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text(text = ticket.Asunto, fontSize = 16.sp)
+                    Text(text = ticket.asunto, fontSize = 16.sp)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "Descripcion: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text(text = ticket.Descripcion, fontSize = 16.sp)
+                    Text(text = ticket.descripcion, fontSize = 16.sp)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "Prioridad: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text(text = ticket.Prioridad ?: "No asignada", fontSize = 16.sp)
+                    Text(text = ticket.prioridad ?: "No asignada", fontSize = 16.sp)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "Técnico: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
@@ -141,15 +141,15 @@ fun TicketRow(
 fun TicketListScreenPreview() {
     val sampleTickets = remember {
         mutableStateListOf(
-            TicketEntity(Fecha = "2024-05-16", Cliente = "Juan Pérez", Asunto = "Revisión", Descripcion = "Equipo no enciende", Prioridad = "", TecnicoId = 1),
-            TicketEntity(Fecha = "2024-05-17", Cliente = "María García", Asunto = "Instalación", Descripcion = "Configurar impresora", Prioridad = "", TecnicoId = 2),
-            TicketEntity(Fecha = "2024-05-18", Cliente = "Carlos López", Asunto = "Mantenimiento", Descripcion = "Limpieza de sistema", Prioridad = "", TecnicoId = null)
+            TicketEntity(fecha = "2024-05-16", cliente = "Juan Pérez", asunto = "Revisión", descripcion = "Equipo no enciende", prioridad = "", tecnicoId = 1),
+            TicketEntity(fecha = "2024-05-17", cliente = "María García", asunto = "Instalación", descripcion = "Configurar impresora", prioridad = "", tecnicoId = 2),
+            TicketEntity(fecha = "2024-05-18", cliente = "Carlos López", asunto = "Mantenimiento", descripcion = "Limpieza de sistema", prioridad = "", tecnicoId = null)
         )
     }
 
     val sampleTecnicos = listOf(
-        TecnicoEntity(TecnicoId = 1, Nombre = "Pedro Sánchez"),
-        TecnicoEntity(TecnicoId = 2, Nombre = "Ana Martínez")
+        TecnicoEntity(tecnicoId = 1, nombre = "Pedro Sánchez"),
+        TecnicoEntity(tecnicoId = 2, nombre = "Ana Martínez")
     )
 
     TicketListScreen(
@@ -158,12 +158,12 @@ fun TicketListScreenPreview() {
         onCreate = {
             sampleTickets.add(
                 TicketEntity(
-                    Fecha = "2024-05-19",
-                    Cliente = "Nuevo Cliente",
-                    Asunto = "Consulta",
-                    Descripcion = "Consulta general",
-                    Prioridad = "",
-                    TecnicoId = null
+                    fecha = "2024-05-19",
+                    cliente = "Nuevo Cliente",
+                    asunto = "Consulta",
+                    descripcion = "Consulta general",
+                    prioridad = "",
+                    tecnicoId = null
                 )
             )
         },

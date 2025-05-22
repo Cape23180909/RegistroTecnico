@@ -6,11 +6,11 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Tickets")
 data class TicketEntity(
     @PrimaryKey(autoGenerate = true)
-    val TicketId: Int?=null,
-    val Fecha: String= "",
-    val Cliente: String= "",
-    val Asunto: String= "",
-    val Descripcion: String= "",
-    val TecnicoId: Int? = null,
-    val Prioridad: String
+    val ticketId: Int?=null,
+    val fecha: String= "",
+    val cliente: String= "",
+    val asunto: String= "",
+    val descripcion: String= "",
+    val tecnicoId: Int? = null,
+    val prioridad: String
 )

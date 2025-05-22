@@ -39,8 +39,8 @@ fun TecnicoScreen(
     agregarTecnico: (String, Double) -> Unit,
     onCancel: () -> Unit
 ) {
-    var nombre by remember { mutableStateOf(tecnico?.Nombre ?: "") }
-    var sueldo by remember { mutableStateOf(tecnico?.Sueldo?.toString() ?: "") }
+    var nombre by remember { mutableStateOf(tecnico?.nombre ?: "") }
+    var sueldo by remember { mutableStateOf(tecnico?.sueldo?.toString() ?: "") }
     var error by remember { mutableStateOf<String?>(null) }
 
     Scaffold(

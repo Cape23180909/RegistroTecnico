@@ -25,13 +25,13 @@ fun TicketScreen(
     saveTicket: (Int?, String, String, String, String, String, Int?) -> Unit,
     onCancel: () -> Unit
 ) {
-    var fecha by remember { mutableStateOf(ticket?.Fecha ?: "") }
-    var cliente by remember { mutableStateOf(ticket?.Cliente ?: "") }
-    var asunto by remember { mutableStateOf(ticket?.Asunto ?: "") }
-    var descripcion by remember { mutableStateOf(ticket?.Descripcion ?: "") }
-    var prioridad by remember { mutableStateOf(ticket?.Prioridad ?: "") }
+    var fecha by remember { mutableStateOf(ticket?.fecha ?: "") }
+    var cliente by remember { mutableStateOf(ticket?.cliente ?: "") }
+    var asunto by remember { mutableStateOf(ticket?.asunto ?: "") }
+    var descripcion by remember { mutableStateOf(ticket?.descripcion ?: "") }
+    var prioridad by remember { mutableStateOf(ticket?.prioridad ?: "") }
     var prioridadMenuExpanded by remember { mutableStateOf(false) }
-    var tecnico by remember { mutableStateOf(ticket?.TecnicoId?.toString() ?: "") }
+    var tecnico by remember { mutableStateOf(ticket?.tecnicoId?.toString() ?: "") }
     var tecnicoMenuExpanded by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -149,7 +149,7 @@ fun TicketScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
-                        value = tecnicoSeleccionado.value?.Nombre ?: "Seleccionar Técnico",
+                        value = tecnicoSeleccionado.value?.nombre ?: "Seleccionar Técnico",
                         onValueChange = {},
                         readOnly = true,
                         label = { Text("Técnico", color = Color.White) },
@@ -175,7 +175,7 @@ fun TicketScreen(
                     ) {
                         tecnicosDisponibles.forEach { tecnicoItem ->
                             DropdownMenuItem(
-                                text = { Text(tecnicoItem.Nombre, color = Color.Black) },
+                                text = { Text(tecnicoItem.nombre, color = Color.Black) },
                                 onClick = {
                                     tecnicoSeleccionado.value = tecnicoItem
                                     tecnicoMenuExpanded = false
@@ -218,13 +218,13 @@ fun TicketScreen(
                                 else -> {
                                     error = null
                                     saveTicket(
-                                        ticket?.TicketId,
+                                        ticket?.ticketId,
                                         fecha,
                                         cliente,
                                         asunto,
                                         descripcion,
                                         prioridad,
-                                        tecnicoSeleccionado.value?.TecnicoId
+                                        tecnicoSeleccionado.value?.tecnicoId
                                     )
                                 }
                             }
@@ -247,8 +247,8 @@ fun TicketScreenPreview() {
     TicketScreen(
         ticket = null,
         tecnicosDisponibles = listOf(
-            TecnicoEntity(TecnicoId = 1, Nombre = "Juan Pérez"),
-            TecnicoEntity(TecnicoId = 2, Nombre = "Ana Gómez")
+            TecnicoEntity(tecnicoId = 1, nombre = "Juan Pérez"),
+            TecnicoEntity(tecnicoId = 2, nombre = "Ana Gómez")
         ),
         saveTicket = { fecha, cliente, asunto, descripcion, prioridad, estado, tecnicoId ->
             println("Nuevo ticket: $fecha, $cliente, $asunto, $descripcion, Prioridad: $prioridad, Estado: $estado, TécnicoId: $tecnicoId")

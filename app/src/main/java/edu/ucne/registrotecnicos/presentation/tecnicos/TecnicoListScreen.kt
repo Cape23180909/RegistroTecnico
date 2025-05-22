@@ -108,11 +108,11 @@ fun TecnicoRow(
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "Nombre: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text(text = tecnico.Nombre, fontSize = 16.sp)
+                    Text(text = tecnico.nombre, fontSize = 16.sp)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "Sueldo: ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text(text = "RD$${tecnico.Sueldo}", fontSize = 16.sp)
+                    Text(text = "RD$${tecnico.sueldo}", fontSize = 16.sp)
                 }
             }
 
@@ -133,15 +133,15 @@ fun TecnicoRow(
 fun TecnicoListScreenPreview() {
     val sampleTecnicos = remember {
         mutableStateListOf(
-            TecnicoEntity(Nombre = "Juan Pérez", Sueldo = 25000.0),
-            TecnicoEntity(Nombre = "María García", Sueldo = 28000.0),
-            TecnicoEntity(Nombre = "Carlos López", Sueldo = 32000.0)
+            TecnicoEntity(nombre = "Juan Pérez", sueldo = 25000.0),
+            TecnicoEntity(nombre = "María García", sueldo = 28000.0),
+            TecnicoEntity(nombre = "Carlos López", sueldo = 32000.0)
         )
     }
 
     TecnicoListScreen(
         tecnicoList = sampleTecnicos,
-        onCreate = { sampleTecnicos.add(TecnicoEntity(Nombre = "Nuevo Técnico", Sueldo = 30000.0)) },
+        onCreate = { sampleTecnicos.add(TecnicoEntity(nombre = "Nuevo Técnico", sueldo = 30000.0)) },
         onDelete = { tecnico -> sampleTecnicos.remove(tecnico) },
         onEdit = { /* Simulación de edición */ }
     )

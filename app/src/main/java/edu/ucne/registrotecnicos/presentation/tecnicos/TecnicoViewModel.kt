@@ -20,9 +20,9 @@ class TecnicoViewModel(
     // Agregar un nuevo técnico
     fun agregarTecnico(nombre: String, sueldo: Double) {
         val tecnico = TecnicoEntity(
-            TecnicoId = null,
-            Nombre = nombre,
-            Sueldo = sueldo
+            tecnicoId = null,
+            nombre = nombre,
+            sueldo = sueldo
         )
         saveTecnico(tecnico)
     }
@@ -47,6 +47,6 @@ class TecnicoViewModel(
 
     // Buscar técnico por ID en la lista actual
     fun getTecnicoById(id: Int?): TecnicoEntity? {
-        return tecnicoList.value.find { it.TecnicoId == id }
+        return tecnicoList.value.find { it.tecnicoId == id }
     }
 }

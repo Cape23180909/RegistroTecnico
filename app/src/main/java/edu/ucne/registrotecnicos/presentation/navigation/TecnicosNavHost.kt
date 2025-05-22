@@ -32,7 +32,7 @@ fun TecnicosNavHost(
             TecnicoListScreen(
                 tecnicoList = tecnicoList,
                 onEdit = { tecnico ->
-                    navController.navigate("tecnico/${tecnico.TecnicoId}")
+                    navController.navigate("tecnico/${tecnico.tecnicoId}")
                 },
                 onCreate = {
                     navController.navigate("tecnico/null")
@@ -54,7 +54,7 @@ fun TecnicosNavHost(
                     if (tecnico == null) {
                         tecnicoViewModel.agregarTecnico(nombre, sueldo)
                     } else {
-                        tecnicoViewModel.update(tecnico.copy(Nombre = nombre, Sueldo = sueldo))
+                        tecnicoViewModel.update(tecnico.copy(nombre = nombre, sueldo = sueldo))
                     }
                     navController.popBackStack()
                 },
@@ -71,7 +71,7 @@ fun TecnicosNavHost(
                 TicketList = ticketList,
                 tecnicos = tecnicosDisponibles,
                 onEdit = { ticket ->
-                    navController.navigate("ticket/${ticket.TicketId}")
+                    navController.navigate("ticket/${ticket.ticketId}")
                 },
                 onCreate = {
                     navController.navigate("ticket/null")
@@ -105,12 +105,12 @@ fun TecnicosNavHost(
                     } else {
                         ticketViewModel.update(
                             ticket.copy(
-                                Fecha = fecha,
-                                Cliente = cliente,
-                                Asunto = asunto,
-                                Descripcion = descripcion,
-                                Prioridad = prioridad,
-                                TecnicoId = tecnicoId
+                                fecha = fecha,
+                                cliente = cliente,
+                                asunto = asunto,
+                                descripcion = descripcion,
+                                prioridad = prioridad,
+                                tecnicoId = tecnicoId
                             )
                         )
                     }
