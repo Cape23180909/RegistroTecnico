@@ -11,6 +11,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,81 +28,94 @@ fun MensajeScreen(
     onSave: () -> Unit,
     onBack: () -> Unit
 ) {
-    // Estado local para manejar el rol seleccionado
     var selectedRole by remember { mutableStateOf("Operator") }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        // Título
-        Text(
-            text = "Reply",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        // Lista de mensajes existentes
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            items(uiState.mensajes) { mensaje ->
-                MensajeCard(mensaje = mensaje)
-            }
-        }
-
-        // Espaciador entre la lista y el formulario
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Opciones de rol
-        Row(modifier = Modifier.padding(vertical = 8.dp)) {
-            RoleButton(text = "Operator", isSelected = selectedRole == "Operator") {
-                selectedRole = "Operator"
-                onRolChange("Operator")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            RoleButton(text = "Owner", isSelected = selectedRole == "Owner") {
-                selectedRole = "Owner"
-                onRolChange("Owner")
-            }
-        }
-
-        // Campo de nombre
-        OutlinedTextField(
-            value = uiState.nombre,
-            onValueChange = onNombreChange,
-            label = { Text("Name") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        // Espaciador
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Área de mensaje
-        TextField(
-            value = uiState.descripcion,
-            onValueChange = onDescripcionChange,
-            label = { Text("Message") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp),
-            singleLine = false
-        )
-
-        // Espaciador
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Botón de guardar
-        Button(
-            onClick = onSave,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-        ) {
-            Text(
-                text = "Save",
-                color = MaterialTheme.colorScheme.onPrimary
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color(0xFFF5F5F5), Color(0xFF7E57C2))
+                )
             )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .padding(bottom = 16.dp) // Evita que el botón choque con íconos del sistema
+        ) {
+
+            // Lista de mensajes existentes
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                items(uiState.mensajes) { mensaje ->
+                    MensajeCard(mensaje = mensaje)
+                }
+            }
+
+            // Espaciador entre la lista y el formulario
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Opciones de rol
+            Row(modifier = Modifier.padding(vertical = 8.dp)) {
+                RoleButton(text = "Operator", isSelected = selectedRole == "Operator") {
+                    selectedRole = "Operator"
+                    onRolChange("Operator")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                RoleButton(text = "Owner", isSelected = selectedRole == "Owner") {
+                    selectedRole = "Owner"
+                    onRolChange("Owner")
+                }
+            }
+
+            // Campo de nombre
+            TextField(
+                value = uiState.nombre,
+                onValueChange = onNombreChange,
+                label = { Text("Nombre") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .background(Color.Black), // Agregamos esto para hacer el fondo blanco
+                singleLine = false
+            )
+
+            // Espaciador
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Área de mensaje
+            TextField(
+                value = uiState.descripcion,
+                onValueChange = onDescripcionChange,
+                label = { Text("Message") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
+                singleLine = false
+            )
+
+            // Espaciador reducido
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Botón de guardar
+            Button(
+                onClick = onSave,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 96.dp)
+                    .height(54.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Text(
+                    text = "Guardar Mensaje",
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
     }
 }
