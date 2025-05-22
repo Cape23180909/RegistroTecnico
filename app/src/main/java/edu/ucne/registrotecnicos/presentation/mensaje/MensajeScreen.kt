@@ -1,25 +1,111 @@
 package edu.ucne.registrotecnicos.presentation.mensaje
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.ucne.registrotecnicos.data.local.entities.MensajeEntity
+import edu.ucne.registrotecnicos.presentation.navigation.UiState
 
+@Composable
+fun MensajeScreen(
+    uiState: UiState,
+    onNombreChange: (String) -> Unit,
+    onRolChange: (String) -> Unit,
+    onDescripcionChange: (String) -> Unit,
+    onSave: () -> Unit,
+    onBack: () -> Unit
+) {
+    // Estado local para manejar el rol seleccionado
+    var selectedRole by remember { mutableStateOf("Operator") }
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        // Título
+        Text(
+            text = "Reply",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // Lista de mensajes existentes
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            items(uiState.mensajes) { mensaje ->
+                MensajeCard(mensaje = mensaje)
+            }
+        }
+
+        // Espaciador entre la lista y el formulario
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Opciones de rol
+        Row(modifier = Modifier.padding(vertical = 8.dp)) {
+            RoleButton(text = "Operator", isSelected = selectedRole == "Operator") {
+                selectedRole = "Operator"
+                onRolChange("Operator")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            RoleButton(text = "Owner", isSelected = selectedRole == "Owner") {
+                selectedRole = "Owner"
+                onRolChange("Owner")
+            }
+        }
+
+        // Campo de nombre
+        OutlinedTextField(
+            value = uiState.nombre,
+            onValueChange = onNombreChange,
+            label = { Text("Name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Espaciador
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Área de mensaje
+        TextField(
+            value = uiState.descripcion,
+            onValueChange = onDescripcionChange,
+            label = { Text("Message") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp),
+            singleLine = false
+        )
+
+        // Espaciador
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Botón de guardar
+        Button(
+            onClick = onSave,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+        ) {
+            Text(
+                text = "Save",
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    }
+}
+
+// Componente personalizado para mostrar un mensaje
 @Composable
 fun MensajeCard(mensaje: MensajeEntity) {
     Card(
@@ -55,51 +141,50 @@ fun MensajeCard(mensaje: MensajeEntity) {
     }
 }
 
+// Componente personalizado para los botones de rol
 @Composable
-fun MensajeScreen(
-    uiState: edu.ucne.registrotecnicos.presentation.navigation.UiState,
-    onNombreChange: (String) -> Unit,
-    onRolChange: (String) -> Unit,
-    onDescripcionChange: (String) -> Unit,
-    onSave: () -> Unit,
-    onBack: () -> Unit
+fun RoleButton(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(uiState.mensajes) { mensaje ->
-                MensajeCard(mensaje = mensaje)
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = uiState.nombre,
-            onValueChange = onNombreChange,
-            label = { Text("Nombre") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = uiState.rol,
-            onValueChange = onRolChange,
-            label = { Text("Rol") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = uiState.descripcion,
-            onValueChange = onDescripcionChange,
-            label = { Text("Descripción del Mensaje") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onSave, modifier = Modifier.fillMaxWidth()) {
-            Text("Guardar Mensaje")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("Volver")
+    val backgroundColor = if (isSelected) {
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+
+    Box(
+        modifier = Modifier
+            .padding(4.dp)
+            .clickable(onClick = onClick)
+            .background(color = backgroundColor, shape = MaterialTheme.shapes.small)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Circle(
+                isSelected = isSelected,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+            )
         }
     }
+}
+
+// Círculo para indicar si el rol está seleccionado
+@Composable
+fun Circle(isSelected: Boolean, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .size(16.dp)
+            .clip(CircleShape)
+            .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
+    )
 }
 
 @Preview(showBackground = true)
@@ -130,37 +215,13 @@ fun PreviewMensajeScreen() {
     )
 
     MaterialTheme {
-        Column(modifier = Modifier.padding(16.dp)) {
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(uiState.mensajes) { mensaje ->
-                    MensajeCard(mensaje)
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = uiState.nombre,
-                onValueChange = {},
-                label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = uiState.rol,
-                onValueChange = {},
-                label = { Text("Rol") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = uiState.descripcion,
-                onValueChange = {},
-                label = { Text("Descripción del Mensaje") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-                Text("Guardar Mensaje")
-            }
-        }
+        MensajeScreen(
+            uiState = uiState,
+            onNombreChange = {},
+            onRolChange = {},
+            onDescripcionChange = {},
+            onSave = {},
+            onBack = {}
+        )
     }
 }
