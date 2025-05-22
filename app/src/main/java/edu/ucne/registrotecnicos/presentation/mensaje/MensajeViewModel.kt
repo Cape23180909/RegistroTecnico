@@ -55,7 +55,7 @@ class MensajeViewModel @Inject constructor(
             return
         }
 
-        val fechaActual = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        val fechaActual = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
 
         val nuevoMensaje = MensajeEntity(
             descripcion = state.descripcion,
