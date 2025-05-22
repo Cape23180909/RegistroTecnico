@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -31,7 +32,8 @@ fun TicketListScreen(
     tecnicos: List<TecnicoEntity>,
     onCreate: () -> Unit,
     onDelete: (TicketEntity) -> Unit,
-    onEdit: (TicketEntity) -> Unit
+    onEdit: (TicketEntity) -> Unit,
+    onMessage: (TicketEntity) -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
@@ -72,7 +74,7 @@ fun TicketListScreen(
             LazyColumn(verticalArrangement = Arrangement.spacedBy(18.dp)) {
                 items(TicketList) { ticket ->
                     val tecnicoNombre = tecnicos.find { it.tecnicoId == ticket.tecnicoId }?.nombre ?: "No asignado"
-                    TicketRow(ticket, tecnicoNombre, onDelete, onEdit)
+                    TicketRow(ticket, tecnicoNombre, onDelete, onEdit, onMessage)
                 }
             }
         }
@@ -84,7 +86,9 @@ fun TicketRow(
     ticket: TicketEntity,
     tecnicoNombre: String,
     onDelete: (TicketEntity) -> Unit,
-    onEdit: (TicketEntity) -> Unit
+    onEdit: (TicketEntity) -> Unit,
+    onMessage: (TicketEntity) -> Unit
+
 ) {
     Card(
         elevation = CardDefaults.cardElevation(14.dp),
@@ -125,6 +129,9 @@ fun TicketRow(
             }
 
             Row {
+                IconButton(onClick = { onMessage(ticket) }) {
+                    Icon(Icons.Filled.Email, contentDescription = "Mensaje", tint = Color(0xFF2196F3))
+                }
                 IconButton(onClick = { onEdit(ticket) }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Editar", tint = Color(0xFF4CAF50))
                 }
@@ -168,6 +175,7 @@ fun TicketListScreenPreview() {
             )
         },
         onDelete = { ticket -> sampleTickets.remove(ticket) },
-        onEdit = { /* Simulación de edición */ }
+        onEdit = { },
+        onMessage = { }
     )
 }

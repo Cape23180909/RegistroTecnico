@@ -78,6 +78,9 @@ fun TecnicosNavHost(
                 },
                 onDelete = { ticket ->
                     ticketViewModel.delete(ticket)
+                },
+                onMessage = {
+
                 }
             )
         }
