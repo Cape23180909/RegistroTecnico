@@ -1,321 +1,195 @@
 package edu.ucne.registrotecnicos.presentation.mensaje
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import edu.ucne.registrotecnicos.data.local.entities.MensajeEntity
-import edu.ucne.registrotecnicos.presentation.navigation.UiState
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
+import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
+import java.text.SimpleDateFormat
+import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MensajeScreen(
-    uiState: UiState,
-    onNombreChange: (String) -> Unit,
-    onRolChange: (String) -> Unit,
-    onDescripcionChange: (String) -> Unit,
-    onSave: () -> Unit,
-    onBack: () -> Unit
-) {
-    var selectedRole by remember { mutableStateOf("Operator") }
-    var error by remember { mutableStateOf<String?>(null) }
+fun MensajeScreen(viewModel: MensajeViewModel = hiltViewModel()) {
+    val uiState by viewModel.uiState.collectAsState()
+    var tecnicoId by remember { mutableStateOf(uiState.tecnicoId ?: "") }
+    var rol by remember { mutableStateOf("Owner") }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(Color(0xFFF5F5F5), Color(0xFF7E57C2))
-                )
-            )
+            .padding(16.dp)
     ) {
-        Column(
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .padding(bottom = 16.dp)
+                .weight(1f)
+                .fillMaxWidth(),
+            reverseLayout = true
         ) {
-
-            // Lista de mensajes existentes
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                items(uiState.mensajes) { mensaje ->
-                    MensajeCard(mensaje = mensaje)
-                }
+            items(uiState.mensajes.reversed()) { mensaje ->
+                MensajeCard(mensaje, uiState.tecnicos)
             }
+        }
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            // Opciones de rol
-            Row(modifier = Modifier.padding(vertical = 8.dp)) {
-                RoleButton(text = "Operator", isSelected = selectedRole == "Operator") {
-                    selectedRole = "Operator"
-                    onRolChange("Operator")
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                RoleButton(text = "Owner", isSelected = selectedRole == "Owner") {
-                    selectedRole = "Owner"
-                    onRolChange("Owner")
-                }
-            }
+        RolSelector(rol = rol, onRolChange = { rol = it })
 
-            // Campo de nombre
-            TextField(
-                value = uiState.nombre,
-                onValueChange = onNombreChange,
-                label = { Text("Nombre") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .background(Color.Black),
-                singleLine = false
-            )
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = tecnicoId,
+            onValueChange = {
+                tecnicoId = it
+                viewModel.onTecnicoIdChange(it)
+            },
+            label = { Text("Técnico ID") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
 
-            // Área de mensaje
-            TextField(
-                value = uiState.descripcion,
-                onValueChange = onDescripcionChange,
-                label = { Text("Message") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp),
-                singleLine = false
-            )
+        Spacer(modifier = Modifier.height(8.dp))
 
-            // Mensaje de error si existe
-            error?.let {
-                Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
+        OutlinedTextField(
+            value = uiState.descripcion,
+            onValueChange = { viewModel.onDescripcionChange(it) },
+            label = { Text("Mensaje") },
+            modifier = Modifier.fillMaxWidth(),
+            maxLines = 3
+        )
 
-            Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, bottom = 96.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Button(
-                    onClick = onBack,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(54.dp)
-                        .padding(end = 8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    shape = MaterialTheme.shapes.medium,
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
-                ) {
-                    Text(text = "Cancelar")
-                }
+        Text(
+            "Fecha: ${SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date(uiState.fecha))}",
+            style = MaterialTheme.typography.bodySmall
+        )
 
-                Button(
-                    onClick = {
-                        when {
-                            uiState.nombre.isBlank() -> error = "El nombre es requerido"
-                            uiState.descripcion.isBlank() -> error = "El mensaje es requerido"
-                            else -> {
-                                error = null
-                                onSave()
-                            }
-                        }
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(54.dp)
-                        .padding(start = 8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    shape = MaterialTheme.shapes.medium,
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
-                ) {
-                    Text(text = "Guardar")
-                }
-            }
+        Spacer(modifier = Modifier.height(8.dp))
+
+
+        OutlinedButton(
+            onClick = { viewModel.saveMensaje() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(Icons.Filled.Check, contentDescription = "Guardar")
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Guardar Mensaje")
+
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        uiState.successMessage?.let {
+            Text(text = it, color = Color(0xFF2E7D32))
+        }
+
+        uiState.errorMessage?.let {
+            Text(text = it, color = Color(0xFFC62828))
         }
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MensajeCard(mensaje: MensajeEntity) {
-    // Formateador para parsear la fecha original
-    val originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    // Formateador para mostrar la fecha
-    val displayFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+fun RolSelector(rol: String, onRolChange: (String) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        RadioButton(
+            selected = rol == "Operator",
+            onClick = { onRolChange("Operator") }
+        )
+        Text("Operator")
 
-    // Intentamos parsear y formatear la fecha, si falla usamos el texto original
-    val fechaFormateada = try {
-        val fechaParseada = LocalDateTime.parse(mensaje.fecha, originalFormatter)
-        fechaParseada.format(displayFormatter)
-    } catch (e: DateTimeParseException) {
-        mensaje.fecha // fallback en caso de error
+        Spacer(modifier = Modifier.width(16.dp))
+
+        RadioButton(
+            selected = rol == "Owner",
+            onClick = { onRolChange("Owner") }
+        )
+        Text("Owner")
+    }
+}
+
+@Composable
+fun MensajeCard(mensaje: MensajeEntity, tecnicos: List<TecnicoEntity>) {
+    val tecnico = tecnicos.find { it.tecnicoId == mensaje.mensajeId }
+    val isOperator = tecnico?.nombre == "Sandeep" // Lógica temporal: usa tu lógica real aquí
+    val chipColor = if (isOperator) Color(0xFF1976D2) else Color(0xFF2E7D32)
+    val chipText = if (isOperator) "Operator" else "Owner"
+    val alignment = if (isOperator) Alignment.End else Alignment.Start
+
+    val backgroundBrush = if (isOperator) {
+        Brush.verticalGradient(
+            colors = listOf(Color(0xFF0D47A1), Color(0xFF1976D2)) // Azul oscuro a azul medio
+        )
+    } else {
+        null
     }
 
-    Card(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
+            .padding(vertical = 4.dp),
+        horizontalAlignment = alignment
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
+                .widthIn(max = 300.dp)
+                .background(
+                    brush = backgroundBrush ?: Brush.verticalGradient(
+                        colors = listOf(Color(0xFFE8F5E9), Color(0xFFE8F5E9)) // Mantener fondo verde claro para Owner
+                    ),
+                    shape = MaterialTheme.shapes.medium
+                )
+                .padding(12.dp)
         ) {
-            Text(
-                text = "Nombre: ${mensaje.nombre}",
-                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
-            )
-            Text(
-                text = "Descripción: ${mensaje.descripcion}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Fecha: $fechaFormateada",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "By ${tecnico?.nombre ?: "Desconocido"}",
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Box(
                     modifier = Modifier
-                        .background(
-                            when (mensaje.rol) {
-                                "Owner" -> Color.Green
-                                "Operator" -> Color.Blue
-                                else -> Color.Gray
-                            }
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .background(chipColor, shape = MaterialTheme.shapes.small)
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = mensaje.rol,
+                        text = chipText,
                         color = Color.White,
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
             }
-        }
-    }
-}
 
-// Componente personalizado para los botones de rol
-@Composable
-fun RoleButton(
-    text: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    val backgroundColor = if (isSelected) {
-        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-    } else {
-        MaterialTheme.colorScheme.surface
-    }
+            Spacer(modifier = Modifier.height(8.dp))
 
-    Box(
-        modifier = Modifier
-            .padding(4.dp)
-            .clickable(onClick = onClick)
-            .background(color = backgroundColor, shape = MaterialTheme.shapes.small)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Circle(
-                isSelected = isSelected,
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                text = mensaje.descripcion,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(mensaje.fecha),
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
             )
         }
-    }
-}
-
-// Círculo para indicar si el rol está seleccionado
-@Composable
-fun Circle(isSelected: Boolean, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .size(16.dp)
-            .clip(CircleShape)
-            .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
-    )
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun PreviewMensajeScreen() {
-    val sampleMensajes = listOf(
-        MensajeEntity(
-            mensajeId = 1,
-            descripcion = "Mensaje de prueba número uno",
-            fecha = "22-5-2025",
-            rol = "Owner",
-            nombre = "Carlos Reyes"
-        ),
-        MensajeEntity(
-            mensajeId = 2,
-            descripcion = "Mensaje de prueba número dos",
-            fecha = "22-5-2025",
-            rol = "Operator",
-            nombre = "Juan Pérez"
-        )
-    )
-
-    val uiState = UiState(
-        mensajes = sampleMensajes,
-        descripcion = "Mensaje temporal",
-        nombre = "Nombre temporal",
-        rol = "Rol temporal"
-    )
-
-    MaterialTheme {
-        MensajeScreen(
-            uiState = uiState,
-            onNombreChange = {},
-            onRolChange = {},
-            onDescripcionChange = {},
-            onSave = {},
-            onBack = {}
-        )
     }
 }

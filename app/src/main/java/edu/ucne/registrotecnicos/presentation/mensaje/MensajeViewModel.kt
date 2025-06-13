@@ -4,92 +4,102 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.registrotecnicos.data.local.entities.MensajeEntity
+import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
+import edu.ucne.registrotecnicos.data.local.repository.TecnicoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ucne.edu.registrotecnicos.data.repository.MensajeRepository
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class MensajeViewModel @Inject constructor(
-    private val mensajeRepository: MensajeRepository
+    private val mensajeRepository: MensajeRepository,
+    private val tecnicoRepository: TecnicoRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
-    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<UiState> = _uiState
 
     init {
         loadMensajes()
+        loadTecnicos()
     }
 
     private fun loadMensajes() {
         viewModelScope.launch {
             mensajeRepository.getAll().collect { mensajes ->
-                _uiState.update { it.copy(mensajes = mensajes) }
+                _uiState.value = _uiState.value.copy(mensajes = mensajes)
             }
         }
     }
 
-    fun onDescripcionChange(newValue: String) {
-        _uiState.update { it.copy(descripcion = newValue) }
+    private fun loadTecnicos() {
+        viewModelScope.launch {
+            tecnicoRepository.getAll().collect { tecnicos ->
+                _uiState.value = _uiState.value.copy(tecnicos = tecnicos)
+            }
+        }
     }
 
-    fun onNombreChange(newValue: String) {
-        _uiState.update { it.copy(nombre = newValue) }
+    fun onDescripcionChange(newDescripcion: String) {
+        _uiState.value = _uiState.value.copy(descripcion = newDescripcion)
     }
 
-    fun onRolChange(newValue: String) {
-        _uiState.update { it.copy(rol = newValue) }
+    fun onTecnicoIdChange(newTecnicoId: String?) {
+        _uiState.value = _uiState.value.copy(tecnicoId = newTecnicoId)
     }
 
     fun saveMensaje() {
-        val state = _uiState.value
+        val currentState = _uiState.value
+        if (!currentState.tecnicoId.isNullOrEmpty() && currentState.descripcion.isNotEmpty()) {
+            // Si quieres guardar el técnico, pero MensajeEntity no tiene ese campo, aquí podrías guardarlo en otro lugar.
+            // Por ahora, solo guardaremos descripcion y fecha como String.
 
-        if (state.descripcion.isBlank() || state.nombre.isBlank() || state.rol.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Todos los campos deben estar llenos.") }
-            return
-        }
+            val fechaActual = Date() // Fecha actual
+            val fechaStr = android.text.format.DateFormat.format("yyyy-MM-dd HH:mm:ss", fechaActual).toString()
 
-        val fechaActual = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
-
-        val nuevoMensaje = MensajeEntity(
-            descripcion = state.descripcion,
-            fecha = fechaActual,
-            rol = state.rol,
-            nombre = state.nombre
-        )
-
-        viewModelScope.launch {
-            mensajeRepository.save(nuevoMensaje)
-            _uiState.update {
-                it.copy(
-                    descripcion = "",
-                    rol = "",
-                    nombre = "",
+            val nuevoMensaje = MensajeEntity(
+                descripcion = currentState.descripcion,
+                fecha = fechaStr,
+                // Rol y nombre podrían venir de alguna otra fuente o ser vacíos
+                rol = "",
+                nombre = ""
+            )
+            viewModelScope.launch {
+                mensajeRepository.saveMensaje(nuevoMensaje)
+                _uiState.value = _uiState.value.copy(
                     successMessage = "Mensaje guardado con éxito",
+                    descripcion = "",
+                    tecnicoId = null,
+                    fecha = System.currentTimeMillis(),
                     errorMessage = null
                 )
             }
+        } else {
+            _uiState.value = _uiState.value.copy(errorMessage = "Debe llenar todos los campos.")
         }
     }
 
     fun nuevoMensaje() {
-        _uiState.update {
-            it.copy(descripcion = "", rol = "", nombre = "", errorMessage = null, successMessage = null)
-        }
+        _uiState.value = _uiState.value.copy(
+            descripcion = "",
+            tecnicoId = null,
+            fecha = System.currentTimeMillis(),
+            successMessage = null,
+            errorMessage = null
+        )
     }
 }
 
 data class UiState(
     val mensajes: List<MensajeEntity> = emptyList(),
+    val tecnicos: List<TecnicoEntity> = emptyList(),
     val descripcion: String = "",
-    val nombre: String = "",
-    val rol: String = "",
+    val tecnicoId: String? = null,
+    val tecnicoSeleccionado: Int? = null, // Campo para el técnico seleccionado
     val successMessage: String? = null,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val fecha: Long = System.currentTimeMillis()
 )
