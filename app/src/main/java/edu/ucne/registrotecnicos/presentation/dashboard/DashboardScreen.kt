@@ -6,7 +6,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -16,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import edu.ucne.registrotecnicos.presentation.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,85 +49,71 @@ fun DashboardScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Sección de Técnicos
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = "Gestión de Técnicos",
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF311B92),
-                            textAlign = TextAlign.Start
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    FilledTonalButton(
-                        onClick = { navController.navigate("tecnicoList") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = Color(0xFF673AB7),
-                            contentColor = Color.White
-                        )
-                    ) {
-                        Text(
-                            text = "Técnicos",
-                            modifier = Modifier.padding(8.dp),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
-            }
+            DashboardCard(
+                title = "Gestión de Técnicos",
+                buttonText = "Técnicos",
+                onClick = { navController.navigate("tecnicoList") }
+            )
 
             // Sección de Tickets
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = "Gestión de Tickets",
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF311B92),
-                            textAlign = TextAlign.Start
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+            DashboardCard(
+                title = "Gestión de Tickets",
+                buttonText = "Tickets",
+                onClick = { navController.navigate("ticketList") }
+            )
 
-                    FilledTonalButton(
-                        onClick = { navController.navigate("ticketList") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = Color(0xFF673AB7),
-                            contentColor = Color.White
-                        )
-                    ) {
-                        Text(
-                            text = "Tickets",
-                            modifier = Modifier.padding(8.dp),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
+            // Sección de Laboratorio
+            DashboardCard(
+                title = "Gestión de Laboratorio",
+                buttonText = "Laboratorios",
+                onClick = { navController.navigate(Screen.LaboratorioList) }
+            )
+        }
+    }
+}
+
+@Composable
+fun DashboardCard(
+    title: String,
+    buttonText: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF311B92),
+                    textAlign = TextAlign.Start
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            FilledTonalButton(
+                onClick = onClick,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = Color(0xFF673AB7),
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = buttonText,
+                    modifier = Modifier.padding(8.dp),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
             }
         }
     }
