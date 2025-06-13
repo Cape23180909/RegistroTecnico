@@ -1,51 +1,51 @@
 package edu.ucne.registrotecnicos
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresExtension
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
-import edu.ucne.registrotecnicos.data.local.database.TareaDb
-import edu.ucne.registrotecnicos.data.local.repository.TecnicoRepository
-import edu.ucne.registrotecnicos.data.local.repository.TicketRepository
-import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import edu.ucne.registrotecnicos.presentation.laboratorios.LaboratorioViewModel
+import edu.ucne.registrotecnicos.presentation.mensaje.MensajeViewModel
 import edu.ucne.registrotecnicos.presentation.navigation.TecnicosNavHost
+import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoViewModel
 import edu.ucne.registrotecnicos.presentation.tickets.TicketViewModel
 import edu.ucne.registrotecnicos.ui.theme.RegistroTecnicosTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var tareaDb: TareaDb
-    private lateinit var tecnicosRepository: TecnicoRepository
-    private lateinit var tecnicosViewModel: TecnicoViewModel
-    private lateinit var ticketRepository: TicketRepository
-    private lateinit var ticketViewModel: TicketViewModel
-
+    @RequiresApi(Build.VERSION_CODES.O)
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Inicialización de la base de datos
-        tareaDb = Room.databaseBuilder(
-            applicationContext,
-            TareaDb::class.java,
-            "Tarea.db"
-        ).fallbackToDestructiveMigration()
-            .build()
-
-        tecnicosRepository = TecnicoRepository(tareaDb.TecnicoDao())
-        tecnicosViewModel = TecnicoViewModel(tecnicosRepository)
-
-        ticketRepository = TicketRepository(tareaDb.TicketDao())
-        ticketViewModel = TicketViewModel(ticketRepository)
-
         setContent {
             RegistroTecnicosTheme {
                 val navController = rememberNavController()
+                val drawerState = rememberDrawerState(DrawerValue.Closed)
+                val scope = rememberCoroutineScope()
+
+                // ViewModels inyectados por Hilt
+                val tecnicoViewModel: TecnicoViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+                val ticketViewModel: TicketViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+                val laboratorioViewModel: LaboratorioViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+                val mensajeViewModel: MensajeViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+
                 TecnicosNavHost(
                     navController = navController,
-                    tecnicoViewModel = tecnicosViewModel,
-                    ticketViewModel = ticketViewModel
+                    tecnicoViewModel = tecnicoViewModel,
+                    ticketViewModel = ticketViewModel,
+                    laboratorioViewModel = laboratorioViewModel,
+                    drawerState = drawerState,
+                    scope = scope
                 )
             }
         }
