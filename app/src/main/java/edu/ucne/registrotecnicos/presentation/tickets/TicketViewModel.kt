@@ -2,6 +2,7 @@ package edu.ucne.registrotecnicos.presentation.tickets
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 import edu.ucne.registrotecnicos.data.local.repository.TicketRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -10,7 +11,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class TicketViewModel@Inject constructor(
+@HiltViewModel
+class TicketViewModel @Inject constructor(
     private val repository: TicketRepository,
 ) : ViewModel() {
 
@@ -19,7 +21,15 @@ class TicketViewModel@Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Agregar un nuevo ticket
-    fun agregarTicket(ticketId: Int?, asunto: String, descripcion: String, fecha: String, cliente: String, prioridad: String, tecnicoId: Int) {
+    fun agregarTicket(
+        ticketId: Int?,
+        asunto: String,
+        descripcion: String,
+        fecha: String,
+        cliente: String,
+        prioridad: String,
+        tecnicoId: Int
+    ) {
         val ticket = TicketEntity(
             ticketId = ticketId,
             fecha = fecha,

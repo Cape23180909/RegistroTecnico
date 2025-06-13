@@ -5,8 +5,9 @@ import edu.ucne.registrotecnicos.data.local.dao.TicketDao
 import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
 import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class TicketRepository (
+class TicketRepository @Inject constructor (
     private val dao: TicketDao
 ) {
     suspend fun save(ticket: TicketEntity) = dao.save(ticket)
