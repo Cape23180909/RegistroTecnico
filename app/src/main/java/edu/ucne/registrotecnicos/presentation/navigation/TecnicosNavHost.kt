@@ -1,18 +1,28 @@
 package edu.ucne.registrotecnicos.presentation.navigation
 
 import TecnicoScreen
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresExtension
+import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import edu.ucne.registrotecnicos.data.local.entities.MensajeEntity
 import edu.ucne.registrotecnicos.presentation.dashboard.DashboardScreen
+import edu.ucne.registrotecnicos.presentation.laboratorios.LaboratorioListScreen
+import edu.ucne.registrotecnicos.presentation.laboratorios.LaboratorioScreen
+import edu.ucne.registrotecnicos.presentation.laboratorios.LaboratorioViewModel
 import edu.ucne.registrotecnicos.presentation.mensaje.MensajeScreen
 import edu.ucne.registrotecnicos.presentation.tickets.TicketListScreen
 import edu.ucne.registrotecnicos.presentation.tickets.TicketScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoListScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoViewModel
 import edu.ucne.registrotecnicos.presentation.tickets.TicketViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 data class UiState(
     val mensajes: List<MensajeEntity>,
@@ -21,11 +31,16 @@ data class UiState(
     val descripcion: String
 )
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TecnicosNavHost(
     navController: NavHostController,
     tecnicoViewModel: TecnicoViewModel,
-    ticketViewModel: TicketViewModel
+    ticketViewModel: TicketViewModel,
+    laboratorioViewModel: LaboratorioViewModel,
+    drawerState: DrawerState,  // Añade esto
+    scope: CoroutineScope
 ) {
     NavHost(
         navController = navController,
@@ -134,46 +149,26 @@ fun TecnicosNavHost(
             )
         }
 
-        // Aquí agregamos la nueva ruta para MensajeScreen
         composable("mensaje") {
-            var nombre by remember { mutableStateOf("") }
-            var rol by remember { mutableStateOf("") }
-            var descripcion by remember { mutableStateOf("") }
-            var mensajes by remember { mutableStateOf(listOf<MensajeEntity>()) }
+            MensajeScreen()
+        }
 
-            // Ejemplo de carga inicial de mensajes (vacío por ahora)
-            LaunchedEffect(Unit) {
-                // Carga tus mensajes reales aquí o desde ViewModel
-                mensajes = listOf()
-            }
-
-            MensajeScreen(
-                uiState = UiState(
-                    mensajes = mensajes,
-                    nombre = nombre,
-                    rol = rol,
-                    descripcion = descripcion
-                ),
-                onNombreChange = { nombre = it },
-                onRolChange = { rol = it },
-                onDescripcionChange = { descripcion = it },
-                onSave = {
-                    val nuevoMensaje = MensajeEntity(
-                        mensajeId = mensajes.size + 1,
-                        nombre = nombre,
-                        rol = rol,
-                        descripcion = descripcion,
-                        fecha = "2025-07-22 10:00:00" // fecha fija para ejemplo
-                    )
-                    mensajes = mensajes + nuevoMensaje
-                    // limpiar campos
-                    nombre = ""
-                    rol = ""
-                    descripcion = ""
+        composable<Screen.LaboratorioList> {
+            LaboratorioListScreen(
+                goToLaboratorio = { laboratorioId ->
+                    navController.navigate(Screen.Laboratorio(laboratorioId))
                 },
-                onBack = {
-                    navController.popBackStack()
+                onDrawer = {
+                    scope.launch { drawerState.open() }
                 }
+            )
+        }
+
+        composable<Screen.Laboratorio> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.Laboratorio>()
+            LaboratorioScreen(
+                laboratorioId = args.laboratorioId,
+                navController = navController
             )
         }
     }
