@@ -12,7 +12,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import edu.ucne.registrotecnicos.presentation.laboratorios.LaboratorioViewModel
+import edu.ucne.registrotecnicos.presentation.laboratorio.LaboratorioViewModel
 import edu.ucne.registrotecnicos.presentation.mensaje.MensajeViewModel
 import edu.ucne.registrotecnicos.presentation.navigation.TecnicosNavHost
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoViewModel
