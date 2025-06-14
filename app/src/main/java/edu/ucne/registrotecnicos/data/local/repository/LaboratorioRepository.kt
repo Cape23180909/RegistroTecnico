@@ -1,20 +1,17 @@
-package edu.ucne.registrotecnicos.data.local.repository
+package edu.ucne.registrotecnicos.data.repository
 
-import android.net.http.HttpException
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresExtension
-import edu.ucne.registrotecnicos.remote.RemoteDataSource
-import edu.ucne.registrotecnicos.remote.Resource
+import edu.ucne.registrotecnicos.data.remote.RemoteDataSource
+import edu.ucne.registrotecnicos.data.remote.Resource
 import edu.ucne.registrotecnicos.remote.dto.LaboratorioDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class LaboratorioRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource
 ) {
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun getLaboratorios(): Flow<Resource<List<LaboratorioDto>>> = flow {
         try {
             emit(Resource.Loading())
@@ -31,9 +28,11 @@ class LaboratorioRepository @Inject constructor(
 
     suspend fun getLaboratorio(id: Int) = remoteDataSource.getLaboratorio(id)
 
-    suspend fun createLaboratorio(laboratorio: LaboratorioDto) = remoteDataSource.createLaboratorio(laboratorio)
+    suspend fun createLaboratorio(laboratorio: LaboratorioDto) =
+        remoteDataSource.createLaboratorio(laboratorio)
 
-    suspend fun updateLaboratorio(laboratorio: LaboratorioDto) = remoteDataSource.updateLaboratorio(laboratorio.laboratorioId, laboratorio)
+    suspend fun updateLaboratorio(laboratorio: LaboratorioDto) =
+        remoteDataSource.updateLaboratorio(laboratorio.laboratorioId, laboratorio)
 
     suspend fun deleteLaboratorio(id: Int) = remoteDataSource.deleteLaboratorio(id)
 }
