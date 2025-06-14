@@ -12,9 +12,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import edu.ucne.registrotecnicos.data.local.entities.MensajeEntity
 import edu.ucne.registrotecnicos.presentation.dashboard.DashboardScreen
-import edu.ucne.registrotecnicos.presentation.laboratorios.LaboratorioListScreen
-import edu.ucne.registrotecnicos.presentation.laboratorios.LaboratorioScreen
-import edu.ucne.registrotecnicos.presentation.laboratorios.LaboratorioViewModel
+import edu.ucne.registrotecnicos.presentation.laboratorio.LaboratorioListScreen
+import edu.ucne.registrotecnicos.presentation.laboratorio.LaboratorioScreen
+import edu.ucne.registrotecnicos.presentation.laboratorio.LaboratorioViewModel
 import edu.ucne.registrotecnicos.presentation.mensaje.MensajeScreen
 import edu.ucne.registrotecnicos.presentation.tickets.TicketListScreen
 import edu.ucne.registrotecnicos.presentation.tickets.TicketScreen
@@ -39,7 +39,7 @@ fun TecnicosNavHost(
     tecnicoViewModel: TecnicoViewModel,
     ticketViewModel: TicketViewModel,
     laboratorioViewModel: LaboratorioViewModel,
-    drawerState: DrawerState,  // Añade esto
+    drawerState: DrawerState,
     scope: CoroutineScope
 ) {
     NavHost(
