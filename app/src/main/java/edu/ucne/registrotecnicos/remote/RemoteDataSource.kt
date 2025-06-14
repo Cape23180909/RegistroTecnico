@@ -1,18 +1,21 @@
-package edu.ucne.registrotecnicos.remote
+package edu.ucne.registrotecnicos.data.remote
 
+import edu.ucne.composedemo.data.remote.LaboratorioApi
 import edu.ucne.registrotecnicos.remote.dto.LaboratorioDto
 import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(
-    private val laboratoriosApi: LaboratorioApi
+    private val api: LaboratorioApi
 ) {
-    suspend fun getLaboratorios(): List<LaboratorioDto> = laboratoriosApi.getLaboratorios()
+    suspend fun getLaboratorios(): List<LaboratorioDto> = api.getLaboratorios()
 
-    suspend fun getLaboratorio(id: Int): LaboratorioDto = laboratoriosApi.getLaboratorio(id)
+    suspend fun createLaboratorio(laboratorio: LaboratorioDto): LaboratorioDto =
+        api.createLaboratorio(laboratorio)
 
-    suspend fun createLaboratorio(laboratorio: LaboratorioDto): LaboratorioDto = laboratoriosApi.createLaboratorio(laboratorio)
+    suspend fun getLaboratorio(id: Int): LaboratorioDto = api.getLaboratorio(id)
 
-    suspend fun updateLaboratorio(id: Int, laboratorio: LaboratorioDto): LaboratorioDto = laboratoriosApi.updateLaboratorio(id, laboratorio)
+    suspend fun updateLaboratorio(id: Int, laboratorio: LaboratorioDto): LaboratorioDto =
+        api.updateLaboratorio(id, laboratorio)
 
-    suspend fun deleteLaboratorio(id: Int) = laboratoriosApi.deleteLaboratorio(id)
+    suspend fun deleteLaboratorio(id: Int) = api.deleteLaboratorio(id)
 }
