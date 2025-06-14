@@ -6,7 +6,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import edu.ucne.registrotecnicos.remote.LaboratorioApi
+import edu.ucne.composedemo.data.remote.LaboratorioApi
+import edu.ucne.registrotecnicos.data.di.DateAdapter
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,14 +18,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object ApiModule {
-    private const val BASE_URL = "http://www.laboratorios.somee.com/"
+    const val BASE_URL = "http://laboratorios.somee.com/"
 
     @Provides
     @Singleton
     fun provideMoshi(): Moshi =
         Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
-            .add(DateAdapter())
             .build()
 
     @Provides
