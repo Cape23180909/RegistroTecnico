@@ -1,23 +1,21 @@
-package edu.ucne.registrotecnicos.presentation.laboratorios
+package edu.ucne.registrotecnicos.presentation.laboratorio
 
-import android.os.Build
-import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,7 +23,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import edu.ucne.registrotecnicos.presentation.navigation.Screen
 
-@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun LaboratorioScreen(
     laboratorioId: Int = 0,
@@ -61,6 +58,7 @@ fun LaboratorioScreen(
     )
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LaboratorioBodyScreen(
@@ -72,92 +70,86 @@ fun LaboratorioBodyScreen(
     goBack: () -> Unit
 ) {
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         topBar = {
-            Box(
-                modifier = Modifier.background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color(0xFF0D47A1), Color(0xFF1976D2))
+            TopAppBar(
+                title = {
+                    Text(
+                        text = if (uiState.laboratorioId == null) "Registrar Laboratorio" else "Editar Laboratorio",
+                        style = TextStyle(
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     )
-                )
-            ) {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = "Registrar Laboratorio",
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = goBack) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = "Regresar", tint = Color.White)
-                        }
-                    },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color.Transparent
-                    )
-                )
-            }
+                }
+            )
         }
-    ) { paddingValues ->
-        Column(
+    ) { padding ->
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            uiState.inputError?.let { error ->
-                Text(
-                    text = error,
-                    color = Color.Red,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color(0xFFEDE7F6), Color(0xFF7E57C2))
+                    )
                 )
-            }
-
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(text = "DescripciÃ³n") },
-                value = uiState.descripcion ?: "",
-                onValueChange = onDescripcionChange,
-                singleLine = true
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(text = "Monto") },
-                value = if (uiState.monto == 0.0) "" else uiState.monto.toString(),
-                onValueChange = onMontoChange,
-                singleLine = true
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(padding)
+                .padding(20.dp),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Black.copy(alpha = 0.95f), shape = MaterialTheme.shapes.medium)
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
-                OutlinedButton(
-                    modifier = Modifier.weight(1f),
-                    onClick = nuevoLaboratorio
-                ) {
-                    Text("Nuevo")
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(Icons.Filled.Refresh, contentDescription = "Nuevo")
+                OutlinedTextField(
+                    value = uiState.descripcion ?: "",
+                    onValueChange = onDescripcionChange,
+                    label = { Text("Descripción del laboratorio") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = if (uiState.monto == 0.0) "" else uiState.monto.toString(),
+                    onValueChange = onMontoChange,
+                    label = { Text("Monto") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                uiState.inputError?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
 
-                OutlinedButton(
-                    modifier = Modifier.weight(1f),
-                    onClick = saveLaboratorio
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(Icons.Filled.Check, contentDescription = "Guardar")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Guardar")
+                    Button(
+                        onClick = { goBack() },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp)
+                    ) {
+                        Text("Cancelar")
+                    }
+
+                    Button(
+                        onClick = { saveLaboratorio() },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 8.dp)
+                    ) {
+                        Text("Guardar")
+                    }
                 }
             }
         }
