@@ -1,12 +1,10 @@
-package edu.ucne.registrotecnicos.presentation.laboratorios
+package edu.ucne.registrotecnicos.presentation.laboratorio
 
-import android.os.Build
-import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import edu.ucne.registrotecnicos.data.local.repository.LaboratorioRepository
-import edu.ucne.registrotecnicos.remote.Resource
+import edu.ucne.registrotecnicos.data.remote.Resource
+import edu.ucne.registrotecnicos.data.repository.LaboratorioRepository
 import edu.ucne.registrotecnicos.remote.dto.LaboratorioDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +13,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @HiltViewModel
 class LaboratorioViewModel @Inject constructor(
     private val laboratorioRepository: LaboratorioRepository
@@ -48,7 +45,6 @@ class LaboratorioViewModel @Inject constructor(
         }
     }
 
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun create() {
         val currentState = _uiState.value
         if (!validarCampos()) return
@@ -57,7 +53,6 @@ class LaboratorioViewModel @Inject constructor(
             try {
                 laboratorioRepository.createLaboratorio(
                     LaboratorioDto(
-                        laboratorioId = 0,
                         descripcion = currentState.descripcion.orEmpty(),
                         monto = currentState.monto
                     )
@@ -72,7 +67,6 @@ class LaboratorioViewModel @Inject constructor(
         }
     }
 
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun update() {
         val currentState = _uiState.value
         if (!validarCampos()) return
@@ -96,7 +90,6 @@ class LaboratorioViewModel @Inject constructor(
         }
     }
 
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun getLaboratorios() {
         viewModelScope.launch {
             laboratorioRepository.getLaboratorios().collectLatest { result ->
@@ -123,6 +116,8 @@ class LaboratorioViewModel @Inject constructor(
                             )
                         }
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -152,7 +147,6 @@ class LaboratorioViewModel @Inject constructor(
     }
 }
 
-// UI State
 data class LaboratorioUiState(
     val laboratorioId: Int? = null,
     val descripcion: String? = null,
