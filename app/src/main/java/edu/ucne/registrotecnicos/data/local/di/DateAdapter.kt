@@ -1,4 +1,4 @@
-package edu.ucne.registrotecnicos.data.local.di
+package edu.ucne.registrotecnicos.data.di
 
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
