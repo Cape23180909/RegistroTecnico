@@ -13,26 +13,56 @@ import javax.inject.Inject
 
 class LaboratorioRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val LaboratorioDao: LaboratorioDao
+    private val laboratorioDao: LaboratorioDao
 ) {
     fun getLaboratorios(): Flow<Resource<List<LaboratorioDto>>> = flow {
         try {
             emit(Resource.Loading())
-            // Obtener datos del servidor
+
+            // ✅ Intentar obtener desde servidor
             val laboratorios = remoteDataSource.getLaboratorios()
             emit(Resource.Success(laboratorios))
 
-            // Guardar en base de datos local
+            // ✅ Guardar en base de datos local
             val listaEntity = laboratorios.map { it.toEntity() }
-            LaboratorioDao.save(listaEntity)
+            laboratorioDao.save(listaEntity)
 
         } catch (e: HttpException) {
             Log.e("Retrofit No connection", "Error de conexión ${e.message}", e)
-            emit(Resource.Error("Error de internet: ${e.message}"))
+
+            // ✅ Obtener desde base de datos local si falla
+            laboratorioDao.getAll().collect { locales ->
+                val dtoList = locales.map { it.toDto() }
+
+                if (dtoList.isNotEmpty()) {
+                    emit(Resource.Success(dtoList))
+                } else {
+                    emit(Resource.Error("No hay conexión a internet y no hay datos locales"))
+                }
+            }
+
         } catch (e: Exception) {
             Log.e("Retrofit Unknown", "Error desconocido ${e.message}", e)
-            emit(Resource.Error("Unknown error: ${e.message}"))
+
+            // ✅ También intentar desde local en cualquier otro error
+            laboratorioDao.getAll().collect { locales ->
+                val dtoList = locales.map { it.toDto() }
+
+                if (dtoList.isNotEmpty()) {
+                    emit(Resource.Success(dtoList))
+                } else {
+                    emit(Resource.Error("Error desconocido y sin datos locales"))
+                }
+            }
         }
+    }
+
+    private fun LaboratorioEntity.toDto(): LaboratorioDto {
+        return LaboratorioDto(
+            laboratorioId = this.laboratorioId,
+            descripcion = this.descripcion,
+            monto = this.monto
+        )
     }
 
     suspend fun getLaboratorio(id: Int) = remoteDataSource.getLaboratorio(id)
