@@ -8,7 +8,6 @@ import edu.ucne.registrotecnicos.data.remote.Resource
 import edu.ucne.registrotecnicos.remote.dto.PagoDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.HttpException
 import javax.inject.Inject
 
 class PagoRepository @Inject constructor(
@@ -16,22 +15,27 @@ class PagoRepository @Inject constructor(
     private val pagoDao: PagoDao
 ) {
     fun getPagos(): Flow<Resource<List<PagoDto>>> = flow {
-        try {
-            emit(Resource.Loading())
-            // Obtener datos del servidor
-            val pagos = remoteDataSource.getPagos()
-            emit(Resource.Success(pagos))
+        emit(Resource.Loading())
 
-            // Guardar en base de datos local
-            val listaEntity = pagos.map { it.toEntity() }
+        try {
+            val pagosRemotos = remoteDataSource.getPagos()
+            emit(Resource.Success(pagosRemotos))
+
+            val listaEntity = pagosRemotos.map { it.toEntity() }
             pagoDao.save(listaEntity)
 
-        } catch (e: HttpException) {
-            Log.e("Retrofit No connection", "Error de conexión ${e.message}", e)
-            emit(Resource.Error("Error de internet: ${e.message}"))
         } catch (e: Exception) {
-            Log.e("Retrofit Unknown", "Error desconocido ${e.message}", e)
-            emit(Resource.Error("Unknown error: ${e.message}"))
+            Log.e("PagoRepository", "Fallo en conexión remota: ${e.message}", e)
+
+            pagoDao.getAll().collect { pagosLocales ->
+                val dtoList = pagosLocales.map { it.toDto() }
+
+                if (dtoList.isNotEmpty()) {
+                    emit(Resource.Success(dtoList))
+                } else {
+                    emit(Resource.Error("No hay conexión a internet y no hay datos locales"))
+                }
+            }
         }
     }
 
@@ -45,8 +49,18 @@ class PagoRepository @Inject constructor(
 
     suspend fun deleteLaboratorio(id: Int) = remoteDataSource.deleteLaboratorio(id)
 
-    fun PagoDto.toEntity(): PagoEntity {
+    // ✅ Función de extensión para convertir PagoDto a PagoEntity
+    private fun PagoDto.toEntity(): PagoEntity {
         return PagoEntity(
+            pagoId = this.pagoId,
+            descripcion = this.descripcion,
+            monto = this.monto
+        )
+    }
+
+    // ✅ Función de extensión para convertir PagoEntity a PagoDto
+    private fun PagoEntity.toDto(): PagoDto {
+        return PagoDto(
             pagoId = this.pagoId,
             descripcion = this.descripcion,
             monto = this.monto
