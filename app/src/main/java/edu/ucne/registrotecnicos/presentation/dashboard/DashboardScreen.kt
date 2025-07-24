@@ -68,6 +68,13 @@ fun DashboardScreen(navController: NavController) {
                 buttonText = "Laboratorios",
                 onClick = { navController.navigate(Screen.LaboratorioList) }
             )
+
+            // Sección de Pago
+            DashboardCard(
+                title = "Gestión de Pagos",
+                buttonText = "Pagos",
+                onClick = { navController.navigate(Screen.PagoList) }
+            )
         }
     }
 }

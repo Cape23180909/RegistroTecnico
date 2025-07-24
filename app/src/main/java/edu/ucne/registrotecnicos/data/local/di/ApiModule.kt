@@ -7,7 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import edu.ucne.composedemo.data.remote.LaboratorioApi
-import edu.ucne.registrotecnicos.data.di.DateAdapter
+import edu.ucne.registrotecnicos.remote.PagoApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -25,6 +25,8 @@ object ApiModule {
     fun provideMoshi(): Moshi =
         Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
+            // Si tienes un adaptador personalizado para fechas, añádelo aquí
+            //.add(DateAdapter())
             .build()
 
     @Provides
@@ -43,12 +45,20 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideLaboratorioApi(moshi: Moshi, client: OkHttpClient): LaboratorioApi {
-        return Retrofit.Builder()
+    fun provideRetrofit(client: OkHttpClient, moshi: Moshi): Retrofit =
+        Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-            .create(LaboratorioApi::class.java)
-    }
+
+    @Provides
+    @Singleton
+    fun provideLaboratorioApi(retrofit: Retrofit): LaboratorioApi =
+        retrofit.create(LaboratorioApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providePagoApi(retrofit: Retrofit): PagoApi =
+        retrofit.create(PagoApi::class.java)
 }

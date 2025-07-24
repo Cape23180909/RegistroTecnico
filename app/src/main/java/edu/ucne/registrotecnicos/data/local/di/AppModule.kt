@@ -34,4 +34,12 @@ object AppModule {
     @Provides
     @Singleton
     fun provideMensajeDao(appDataDb: TareaDb ) = appDataDb.MensajeDao()
+
+    @Provides
+    @Singleton
+    fun provideLaboratorioDao(appDataDb: TareaDb) = appDataDb.LaboratorioDao()
+
+    @Provides
+    @Singleton
+    fun providePagoDao(appDataDb: TareaDb) = appDataDb.PagoDao()
 }

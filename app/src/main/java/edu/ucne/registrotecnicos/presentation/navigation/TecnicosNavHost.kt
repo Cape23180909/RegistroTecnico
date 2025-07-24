@@ -16,6 +16,8 @@ import edu.ucne.registrotecnicos.presentation.laboratorio.LaboratorioListScreen
 import edu.ucne.registrotecnicos.presentation.laboratorio.LaboratorioScreen
 import edu.ucne.registrotecnicos.presentation.laboratorio.LaboratorioViewModel
 import edu.ucne.registrotecnicos.presentation.mensaje.MensajeScreen
+import edu.ucne.registrotecnicos.presentation.pagos.PagoListScreen
+import edu.ucne.registrotecnicos.presentation.pagos.PagoScreen
 import edu.ucne.registrotecnicos.presentation.tickets.TicketListScreen
 import edu.ucne.registrotecnicos.presentation.tickets.TicketScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoListScreen
@@ -168,6 +170,25 @@ fun TecnicosNavHost(
             val args = backStackEntry.toRoute<Screen.Laboratorio>()
             LaboratorioScreen(
                 laboratorioId = args.laboratorioId,
+                navController = navController
+            )
+        }
+
+        composable<Screen.PagoList> {
+            PagoListScreen(
+                goToPago = { pagoId ->
+                    navController.navigate(Screen.Pago(pagoId))
+                },
+                onDrawer = {
+                    scope.launch { drawerState.open() }
+                }
+            )
+        }
+
+        composable<Screen.Pago> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.Pago>()
+            PagoScreen(
+                PagoId = args.pagoId,
                 navController = navController
             )
         }
